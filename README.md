@@ -1,10 +1,3 @@
-# Prospect Management System API Documentation
-
-Welcome to the Prospect Management System API documentation. This API facilitates the management of prospects and other functionalities. Below, you will find information on setting up, running, and testing the API.
-
-## Note
-Render Free database adds few seconds to the reponse time.
-
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
