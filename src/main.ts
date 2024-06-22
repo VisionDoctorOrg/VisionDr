@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as dotenv from 'dotenv';
+import { setupSwagger } from './config';
+// import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -29,6 +30,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Setup Swagger
+  setupSwagger(app);
 
   const logger = new Logger('bootstrap');
 
