@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { hash, compare } from 'bcrypt';
+import { hash, compare } from 'bcryptjs';
 import { AuthMapper } from 'src/application/auth/mappers/auth.mapper';
 import { SignupDto } from 'src/application/auth/dtos/signup.dto';
 import { JwtAuthService, UserExistException } from 'src/common';
@@ -30,7 +30,7 @@ export class AuthService {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientValidationError) {
       throw new HttpException(
-        'An error occurred, please check your values',
+        'An error occurred, please check your values', 
         HttpStatus.BAD_REQUEST,
       );
     }
