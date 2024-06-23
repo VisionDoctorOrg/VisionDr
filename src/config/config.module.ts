@@ -1,8 +1,5 @@
 import { Module } from '@nestjs/common';
-import {
-  ConfigService,
-  ConfigModule as NestConfigModule,
-} from '@nestjs/config';
+import { ConfigService, ConfigModule as NestConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 @Module({
@@ -10,7 +7,6 @@ import * as Joi from 'joi';
     NestConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      //envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         PORT: Joi.string().required(),
@@ -21,26 +17,25 @@ import * as Joi from 'joi';
           .valid('development', 'production')
           .default('development')
           .required(),
+        SWAGGER_DOC_TITLE: Joi.string().default('API Documentation'),
+        SWAGGER_DOC_DESCRIPTION: Joi.string().default('API Description'),
+        SWAGGER_DOC_VERSION: Joi.string().default('1.0'),
+        SWAGGER_PATH: Joi.string().default('documentation'),
+        SWAGGER_SITE_TITLE: Joi.string().default('API Docs'),
+        SWAGGER_MODELS_EXPAND_DEPTH: Joi.number().default(-1),
       }),
       load: [
         () => ({
           swagger: {
-            docTitle: process.env.SWAGGER_DOC_TITLE || 'API Documentation',
-            docDescription:
-              process.env.SWAGGER_DOC_DESCRIPTION || 'API Description',
-            docVersion: process.env.SWAGGER_DOC_VERSION || '1.0',
-            path: process.env.SWAGGER_PATH || 'documentation',
-            siteTitle: process.env.SWAGGER_SITE_TITLE || 'API Docs',
-            defaultModelsExpandDepth: process.env.SWAGGER_MODELS_EXPAND_DEPTH
-              ? parseInt(process.env.SWAGGER_MODELS_EXPAND_DEPTH, 10)
-              : -1,
+            docTitle: process.env.SWAGGER_DOC_TITLE,
+            docDescription: process.env.SWAGGER_DOC_DESCRIPTION,
+            docVersion: process.env.SWAGGER_DOC_VERSION,
+            path: process.env.SWAGGER_PATH,
+            siteTitle: process.env.SWAGGER_SITE_TITLE,
+            defaultModelsExpandDepth: parseInt(process.env.SWAGGER_MODELS_EXPAND_DEPTH, 10),
           },
         }),
       ],
-      // validationOptions: {
-      //   allowUnknown: false,
-      //   abortEarly: true,
-      // },
     }),
   ],
   providers: [ConfigService],
