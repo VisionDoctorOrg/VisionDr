@@ -37,10 +37,10 @@ import * as Joi from 'joi';
           },
         }),
       ],
-      validationOptions: {
-        allowUnknown: false,
-        abortEarly: true,
-      },
+      // validationOptions: {
+      //   allowUnknown: false,
+      //   abortEarly: true,
+      // },
     }),
   ],
   providers: [ConfigService],
