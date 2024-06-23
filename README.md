@@ -39,7 +39,7 @@ $ npm run start:prod
 The API will be accessible at  [API](https://test-ktsa.onrender.com/api/v1) 
 
 
-Feel free to explore the API and refer to the [API Documentation](https://documenter.getpostman.com/view/19595090/2sA3XTefWd) for detailed information on each endpoint and their functionalities.
+Feel free to explore the API and refer to the [API Documentation](https://visiondr.onrender.com/documentation) for detailed information on each endpoint and their functionalities.
 
 
 
