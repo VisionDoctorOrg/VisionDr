@@ -25,12 +25,12 @@ import * as Joi from 'joi';
       load: [
         () => ({
           swagger: {
-            docTitle: process.env.SWAGGER_DOC_TITLE,
+            docTitle: process.env.SWAGGER_DOC_TITLE || 'API Documentation',
             docDescription:
-              process.env.SWAGGER_DOC_DESCRIPTION,
-            docVersion: process.env.SWAGGER_DOC_VERSION,
-            path: process.env.SWAGGER_PATH ,
-            siteTitle: process.env.SWAGGER_SITE_TITLE ,
+              process.env.SWAGGER_DOC_DESCRIPTION || 'API Description',
+            docVersion: process.env.SWAGGER_DOC_VERSION || '1.0',
+            path: process.env.SWAGGER_PATH || 'documentation',
+            siteTitle: process.env.SWAGGER_SITE_TITLE || 'API Docs',
             defaultModelsExpandDepth: process.env.SWAGGER_MODELS_EXPAND_DEPTH
               ? parseInt(process.env.SWAGGER_MODELS_EXPAND_DEPTH, 10)
               : -1,

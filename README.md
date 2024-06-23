@@ -19,30 +19,6 @@
 - Prisma
 - PostgreSQL database
 
-# Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/IgnatiusFrancis/BackendAss.git
-
-   # Install dependencies:
-   npm install
-   ```
-
-# Configuration
-
-Create a .env.development or production file in the root directory and configure the following environment variables:
-
-```env
-DATABASE_URL=""
-NODE_ENV=""
-BASEURL="random string"
-PORT=""
-JWT_SECRET=""
-JWT_EXPIRATION=""
-```
-
 # Usage
 
 ## Starting the Server
