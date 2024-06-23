@@ -30,25 +30,25 @@ import * as Joi from 'joi';
       }),
       load: [
         () => ({
-          swagger: {
-            docTitle: process.env.SWAGGER_DOC_TITLE,
-            docDescription:
-              process.env.SWAGGER_DOC_DESCRIPTION,
-            docVersion: process.env.SWAGGER_DOC_VERSION,
-            path: process.env.SWAGGER_PATH,
-            siteTitle: process.env.SWAGGER_SITE_TITLE,
-            defaultModelsExpandDepth: process.env.SWAGGER_MODELS_EXPAND_DEPTH
-              ? parseInt(process.env.SWAGGER_MODELS_EXPAND_DEPTH, 10)
-              : -1,
-          },
           // swagger: {
-          //   docTitle: 'API Documentation',
-          //   docDescription:  'API Description',
-          //   docVersion: '1.0',
-          //   path:  'documentation',
-          //   siteTitle: 'API Docs',
-          //   defaultModelsExpandDepth: -1,
+          //   docTitle: process.env.SWAGGER_DOC_TITLE,
+          //   docDescription:
+          //     process.env.SWAGGER_DOC_DESCRIPTION,
+          //   docVersion: process.env.SWAGGER_DOC_VERSION,
+          //   path: process.env.SWAGGER_PATH,
+          //   siteTitle: process.env.SWAGGER_SITE_TITLE,
+          //   defaultModelsExpandDepth: process.env.SWAGGER_MODELS_EXPAND_DEPTH
+          //     ? parseInt(process.env.SWAGGER_MODELS_EXPAND_DEPTH, 10)
+          //     : -1,
           // },
+          swagger: {
+            docTitle: 'API Documentation',
+            docDescription:  'API Description',
+            docVersion: '1.0',
+            path:  'documentation',
+            siteTitle: 'API Docs',
+            defaultModelsExpandDepth: -1,
+          },
         }),
       ],
       // validationOptions: {
