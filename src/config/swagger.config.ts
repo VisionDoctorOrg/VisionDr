@@ -8,8 +8,19 @@ import {
 } from '@nestjs/swagger';
 
 export const setupSwagger = (app: INestApplication) => {
+  
   const configService = app.get(ConfigService);
-  const swaggerConfig = configService.get('swagger');
+  //const swaggerConfig = configService.get('swagger');
+
+  const swaggerConfig = {
+    docTitle: configService.get<string>('SWAGGER_DOC_TITLE'),
+    docDescription: configService.get<string>('SWAGGER_DOC_DESCRIPTION'),
+    docVersion: configService.get<string>('SWAGGER_DOC_VERSION'),
+    path: configService.get<string>('SWAGGER_PATH'),
+    siteTitle: configService.get<string>('SWAGGER_SITE_TITLE'),
+    defaultModelsExpandDepth: configService.get<number>('SWAGGER_MODELS_EXPAND_DEPTH'),
+  };
+
 
   const config = new DocumentBuilder()
     .setTitle(swaggerConfig?.docTitle)
@@ -22,15 +33,17 @@ export const setupSwagger = (app: INestApplication) => {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   };
 
+  console.log(documentOptions)
+
   const document = SwaggerModule.createDocument(app, config, documentOptions);
 
   const customOptions: SwaggerCustomOptions = {
     swaggerOptions: {
       persistAuthorization: true,
-      defaultModelsExpandDepth: swaggerConfig?.defaultModelsExpandDepth ?? -1,
+      defaultModelsExpandDepth: swaggerConfig.defaultModelsExpandDepth,
     },
-    customSiteTitle: swaggerConfig?.siteTitle,
+    customSiteTitle: swaggerConfig.siteTitle,
   };
 
-  SwaggerModule.setup(swaggerConfig?.path, app, document, customOptions);
+  SwaggerModule.setup(swaggerConfig.path, app, document, customOptions);
 };

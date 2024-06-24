@@ -28,7 +28,7 @@ import * as Joi from 'joi';
         SWAGGER_SITE_TITLE: Joi.string().required(),
         SWAGGER_MODELS_EXPAND_DEPTH: Joi.number().required(),
       }),
-      load: [
+      load: [ 
         () => ({
           // swagger: {
           //   docTitle: process.env.SWAGGER_DOC_TITLE,
@@ -41,14 +41,6 @@ import * as Joi from 'joi';
           //     ? parseInt(process.env.SWAGGER_MODELS_EXPAND_DEPTH, 10)
           //     : -1,
           // },
-          swagger: {
-            docTitle: 'API Documentation',
-            docDescription:  'API Description',
-            docVersion: '1.0',
-            path:  'documentation',
-            siteTitle: 'API Docs',
-            defaultModelsExpandDepth: -1,
-          },
         }),
       ],
       // validationOptions: {
