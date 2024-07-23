@@ -6,9 +6,8 @@ import { LoginUseCase } from '../../application/auth/use-cases/login.use-case';
 import { AuthMapper } from '../../application/auth/mappers/auth.mapper';
 import { AuthService } from './services/auth.service';
 import { JwtAuthService, PrismaService } from 'src/common';
-import { UserRepo } from 'src/infrastructure/repositories/user.repository';
-import { UserRepository } from '../admin/interfaces/user-repository.interface';
-
+import { UserRepo } from 'src/infrastructure/repositories/users.repository';
+import { UserRepository } from '../users/interfaces/user-repository.interface';
 
 @Module({
   controllers: [AuthController],
@@ -21,7 +20,7 @@ import { UserRepository } from '../admin/interfaces/user-repository.interface';
     AuthMapper,
     {
       provide: UserRepository,
-      useClass: UserRepo, 
+      useClass: UserRepo,
     },
   ],
 })

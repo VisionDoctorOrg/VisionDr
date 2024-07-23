@@ -29,10 +29,18 @@ model user {
 model Waitlist {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   fullName String
-  email    String
+  organizationName String?
+  type Type
+  email    String @unique
   phone    String
   status   String @default("waiting")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+
+enum Type {
+  Individual
+  Organization
 }

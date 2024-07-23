@@ -1,6 +1,5 @@
-import { User } from 'src/domain/admin/entities/user.entity';
+import { User } from 'src/domain/users/entities/user.entity';
 import { SignupDto } from '../dtos/signup.dto';
-import { v4 as uuidv4 } from 'uuid'; 
 
 export class AuthMapper {
   static toDomain(signupDto: SignupDto): User {
