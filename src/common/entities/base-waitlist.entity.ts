@@ -1,8 +1,6 @@
-export abstract class BaseWaitlist {
+export abstract class BaseEntity {
   id?: string;
-  fullName: string;
-  type?: string;
-  organizationName?: string;
+  fullName?: string;
   email: string;
   phone: string;
   createdAt?: Date;

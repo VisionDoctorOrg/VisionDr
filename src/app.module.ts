@@ -11,9 +11,16 @@ import {
 import { ConfigModule } from './config';
 import { AuthModule } from './domain/auth/auth.module';
 import { WaitlistModule } from './domain/waitlist/waitlist.module';
+import { ContactUsModule } from './domain/contactUs/contactUs.module';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, AuthModule, WaitlistModule],
+  imports: [
+    ConfigModule,
+    PrismaModule,
+    AuthModule,
+    WaitlistModule,
+    ContactUsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

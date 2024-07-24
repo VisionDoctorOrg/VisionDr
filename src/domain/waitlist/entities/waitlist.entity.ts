@@ -1,3 +1,6 @@
-import { BaseWaitlist } from 'src/common';
+import { BaseEntity } from 'src/common';
 
-export class Waitlist extends BaseWaitlist {}
+export class Waitlist extends BaseEntity {
+  type?: string;
+  organizationName?: string;
+}

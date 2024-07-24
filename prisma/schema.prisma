@@ -44,7 +44,7 @@ model ContactUs {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   name String
   type Type
-  email    String @unique
+  email    String 
   phone    String
   message   String 
 
