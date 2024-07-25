@@ -16,19 +16,19 @@ import * as Joi from 'joi';
         PORT: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().required(),
-        BASEURL: Joi.string().required(),
+        BASEURLS: Joi.string().required(),
         NODE_ENV: Joi.string()
           .valid('development', 'production')
           .default('development')
           .required(),
-          SWAGGER_DOC_TITLE: Joi.string().required(),
+        SWAGGER_DOC_TITLE: Joi.string().required(),
         SWAGGER_DOC_DESCRIPTION: Joi.string().required(),
         SWAGGER_DOC_VERSION: Joi.string().required(),
         SWAGGER_PATH: Joi.string().required(),
         SWAGGER_SITE_TITLE: Joi.string().required(),
         SWAGGER_MODELS_EXPAND_DEPTH: Joi.number().required(),
       }),
-      load: [ 
+      load: [
         () => ({
           // swagger: {
           //   docTitle: process.env.SWAGGER_DOC_TITLE,
