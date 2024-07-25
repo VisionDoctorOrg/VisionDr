@@ -8,9 +8,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1/');
   const configService = app.get(ConfigService);
-
+  // console.log(configService.get<string>('BASE_URLS')?.split(',') || '*');
   app.enableCors({
-    origin: process.env.BASE_URLS?.split(',') || '*',
+    origin: configService.get<string>('BASE_URLS')?.split(',') || '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,PATCH',
     allowedHeaders: 'Content-Type,Authorization',
     credentials: true,
