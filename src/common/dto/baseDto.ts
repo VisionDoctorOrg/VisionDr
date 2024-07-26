@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseDto {
@@ -21,12 +27,9 @@ export class BaseDto {
   @ApiProperty({
     example: '+2347012345678',
     description: 'The phone number of the user',
-    required: true,
+    required: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @Matches(/^(\+234|0)[789]\d{9}$/, {
-    message: 'phoneNumber must be a valid phone number',
-  })
-  phone: string;
+  phone?: string;
 }
