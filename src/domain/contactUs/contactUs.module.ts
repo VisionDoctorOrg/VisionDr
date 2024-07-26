@@ -1,6 +1,5 @@
 import { Logger, Module } from '@nestjs/common';
 import { PrismaService } from 'src/common';
-import { WaitlistController } from 'src/application/waitlist/controllers/waitlist.controller';
 import {
   ContactUsController,
   ContactUsMapper,
@@ -9,11 +8,15 @@ import {
 import { ContactUsRepository } from './interfaces';
 import { contactRepository } from 'src/infrastructure/repositories/contactUs.repository';
 import { ContactUsService } from './services';
+import { MailService } from 'src/common/mail/mail.service';
+import { MailModule } from 'src/common/mail/mail.module';
 
 @Module({
+  imports: [MailModule],
   controllers: [ContactUsController],
   providers: [
     ContactUsService,
+    MailService,
     PrismaService,
     ContactUsUseCase,
     ContactUsMapper,

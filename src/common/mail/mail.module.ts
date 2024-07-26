@@ -11,6 +11,7 @@ import * as path from 'path';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         transport: {
+          service: configService.get('MAIL_SERVICE'),
           host: configService.get('MAIL_HOST'),
           port: parseInt(configService.get('MAIL_PORT')),
           ignoreTLS: true,
