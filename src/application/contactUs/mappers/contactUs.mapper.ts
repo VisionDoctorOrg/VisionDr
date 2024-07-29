@@ -3,6 +3,7 @@ import { ContactUs } from 'src/domain/contactUs/entities';
 
 export class ContactUsMapper {
   static toDomain(contactUs: ContactUsDto): ContactUs {
+    console.log(contactUs);
     return {
       fullName: contactUs.fullName,
       email: contactUs.email,

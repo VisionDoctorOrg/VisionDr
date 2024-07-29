@@ -16,17 +16,13 @@ export class ContactUsUseCase {
     const contact = await this.contactUsService.createContact(contactUsDto);
 
     // send mail
-    await this.mailService.sendMail(
-      'obiignatiusfrancis@gmail.com',
-      'Contact Test',
-      'contact',
-      {
-        firstName: contact.fullName,
-        phone: contact.phone,
-        message: contact.message,
-        type: contact.type,
-      },
-    );
+    await this.mailService.sendMail('obiignatiusfrancis@gmail.com', {
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      message: contact.message,
+      type: contact.type,
+    });
 
     return ContactUsMapper.toDto(contact);
   }
