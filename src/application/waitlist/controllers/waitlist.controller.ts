@@ -1,8 +1,8 @@
 import { Controller, Post, Body, HttpStatus } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { WaitlistUseCase } from '../use-cases/waitlist.use-case';
-import { WaitlistDto } from '../dtos/waitlist.dto';
-import { Waitlist } from 'src/domain/waitlist/entities';
+import { NewsLetterDto, WaitlistDto } from '../dtos/waitlist.dto';
+import { Newsletter, Waitlist } from 'src/domain/waitlist/entities';
 import { WaitlistMapper } from '../mappers/waitlist.mapper';
 
 @ApiTags('waitlist')
@@ -24,5 +24,24 @@ export class WaitlistController {
   public async waitlist(@Body() waitlistDto: WaitlistDto): Promise<Waitlist> {
     const waitlist = await this.waitlistUseCase.execute(waitlistDto);
     return WaitlistMapper.toDto(waitlist);
+  }
+
+  @Post('newsletter')
+  @ApiOperation({ summary: 'Subscribe to our Newsletter' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully subscribed to our newsletter.',
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'User already subscribed.',
+  })
+  public async newsletter(
+    @Body() newsLetterDto: NewsLetterDto,
+  ): Promise<Newsletter> {
+    const newsletter =
+      await this.waitlistUseCase.executeNewsLetter(newsLetterDto);
+    return WaitlistMapper.toNewsLetterDto(newsletter);
   }
 }

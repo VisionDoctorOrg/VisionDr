@@ -23,3 +23,5 @@ export class WaitlistDto extends BaseDto {
   @IsEnum(Type)
   type: Type;
 }
+
+export class NewsLetterDto extends BaseDto {}

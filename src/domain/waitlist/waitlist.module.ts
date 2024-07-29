@@ -6,6 +6,7 @@ import { WaitlistMapper } from 'src/application/waitlist/mappers/waitlist.mapper
 import { WaitlistRepository } from './interfaces';
 import { waitlistRepository } from 'src/infrastructure/repositories/waitlist.repository';
 import { WaitlistController } from 'src/application/waitlist/controllers/waitlist.controller';
+import { MailService } from 'src/common/mail/mail.service';
 
 @Module({
   controllers: [WaitlistController],
@@ -14,6 +15,7 @@ import { WaitlistController } from 'src/application/waitlist/controllers/waitlis
     PrismaService,
     WaitlistUseCase,
     WaitlistMapper,
+    MailService,
     Logger,
     {
       provide: WaitlistRepository,

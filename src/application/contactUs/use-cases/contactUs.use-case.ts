@@ -17,8 +17,8 @@ export class ContactUsUseCase {
 
     // send mail
     await this.mailService.sendMail(
-      'ignatiuzzfrank@gmail.com',
-      'Contact Request',
+      'obiignatiusfrancis@gmail.com',
+      'Contact Test',
       'contact',
       {
         firstName: contact.fullName,

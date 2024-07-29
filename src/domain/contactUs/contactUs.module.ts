@@ -9,10 +9,8 @@ import { ContactUsRepository } from './interfaces';
 import { contactRepository } from 'src/infrastructure/repositories/contactUs.repository';
 import { ContactUsService } from './services';
 import { MailService } from 'src/common/mail/mail.service';
-import { MailModule } from 'src/common/mail/mail.module';
 
 @Module({
-  imports: [MailModule],
   controllers: [ContactUsController],
   providers: [
     ContactUsService,

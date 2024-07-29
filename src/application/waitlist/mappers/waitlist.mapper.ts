@@ -1,5 +1,5 @@
-import { Waitlist } from 'src/domain/waitlist/entities';
-import { WaitlistDto } from '../dtos/waitlist.dto';
+import { Newsletter, Waitlist } from 'src/domain/waitlist/entities';
+import { NewsLetterDto, WaitlistDto } from '../dtos/waitlist.dto';
 import { Type } from '@prisma/client';
 
 export class WaitlistMapper {
@@ -32,6 +32,21 @@ export class WaitlistMapper {
       phone: waitlist.phone,
       createdAt: waitlist.createdAt,
       updatedAt: waitlist.updatedAt,
+    };
+  }
+
+  static toNewsLetterDomain(newsLetterDto: NewsLetterDto): Newsletter {
+    return {
+      email: newsLetterDto.email,
+    };
+  }
+
+  static toNewsLetterDto(newsletter: Newsletter): Newsletter {
+    return {
+      id: newsletter.id,
+      email: newsletter.email,
+      createdAt: newsletter.createdAt,
+      updatedAt: newsletter.updatedAt,
     };
   }
 }
