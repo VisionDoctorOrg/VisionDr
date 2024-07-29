@@ -97,7 +97,7 @@ export class MailService {
       sendSmtpEmail.htmlContent = emailHtml;
       sendSmtpEmail.sender = {
         name: 'VisionDR',
-        email: this.configService.get('MAIL_FROM'),
+        email: 'ignatiuzzfrank@gmail.com',
       };
       sendSmtpEmail.to = [{ email: adminEmail, name: 'Admin' }];
 
