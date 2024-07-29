@@ -112,6 +112,7 @@ export class MailService {
   private readonly logger = new Logger(MailService.name);
   private readonly brevoApiKey: string;
   private readonly brevoApi: SibApiV3Sdk.TransactionalEmailsApi;
+  private readonly brevoApii: SibApiV3Sdk.createContact;
 
   constructor(
     //private readonly mailer: MailerService,
@@ -121,6 +122,7 @@ export class MailService {
     SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey =
       this.brevoApiKey;
     this.brevoApi = new SibApiV3Sdk.TransactionalEmailsApi();
+    this.brevoApii = new SibApiV3Sdk.ContactsApi();
   }
 
   public async sendMail(
@@ -181,13 +183,12 @@ export class MailService {
 
   public async newsLetter(email: string): Promise<any> {
     try {
-      // Create a new contact or update existing contact
       const contact = {
         email,
-        listIds: [2], // Replace with your list ID
+        listIds: [3],
       };
 
-      const response = await this.brevoApi.createContact(contact);
+      const response = await this.brevoApii.createContact(contact);
 
       this.logger.log('Subscription successful:', response);
       return response;

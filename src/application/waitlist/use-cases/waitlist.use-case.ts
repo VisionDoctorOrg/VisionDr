@@ -13,8 +13,8 @@ export class WaitlistUseCase {
     return WaitlistMapper.toDto(waitlist);
   }
 
-  async executeNewsLetter(newsLetterDto: NewsLetterDto): Promise<Newsletter> {
+  async executeNewsLetter(newsLetterDto: NewsLetterDto): Promise<string> {
     const newsletter = await this.waitlistService.newsLetter(newsLetterDto);
-    return WaitlistMapper.toNewsLetterDto(newsletter);
+    return newsletter;
   }
 }

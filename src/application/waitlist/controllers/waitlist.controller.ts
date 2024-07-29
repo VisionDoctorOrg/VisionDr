@@ -39,9 +39,9 @@ export class WaitlistController {
   })
   public async newsletter(
     @Body() newsLetterDto: NewsLetterDto,
-  ): Promise<Newsletter> {
+  ): Promise<string> {
     const newsletter =
       await this.waitlistUseCase.executeNewsLetter(newsLetterDto);
-    return WaitlistMapper.toNewsLetterDto(newsletter);
+    return newsletter;
   }
 }

@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { UserExistException } from 'src/common';
 import { WaitlistRepository } from '../interfaces';
 import {
@@ -34,19 +40,31 @@ export class WaitlistService {
     }
   }
 
-  public async newsLetter(newsletter: NewsLetterDto): Promise<any> {
+  public async newsLetter(newsletter: NewsLetterDto): Promise<string> {
     try {
       const { email } = newsletter;
 
-      // Create a new contact or update existing contact
+      await this.mailService.newsLetter(email);
 
-      const response = await this.mailService.newsLetter(email);
-      //const response = await this.brevoApi.createContact(contact);
-
-      this.logger.log('Subscription successful', response);
-      return 'Subscription successful';
+      return 'Successfully Subscribed to newaletter';
     } catch (error) {
-      this.logger.error('Error subscribing to newsletter:', error);
+      this.logger.error(
+        'Error subscribing to newsletter:',
+        JSON.stringify(error, null, 3),
+      );
+
+      if (error?.response?.text) {
+        const responseText = JSON.parse(error.response.text);
+
+        if (responseText.code === 'duplicate_parameter') {
+          throw new HttpException(
+            'Email already subscribed',
+            HttpStatus.CONFLICT,
+          );
+        }
+
+        return 'Contact already exists';
+      }
       throw error;
     }
   }
