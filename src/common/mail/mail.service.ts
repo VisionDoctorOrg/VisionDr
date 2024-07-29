@@ -1,7 +1,6 @@
 // mail.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as path from 'path';
 import * as SibApiV3Sdk from 'sib-api-v3-sdk';
 import * as handlebars from 'handlebars';
 
