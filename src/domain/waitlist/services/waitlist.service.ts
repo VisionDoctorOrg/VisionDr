@@ -25,9 +25,8 @@ export class WaitlistService {
 
   public async createWaitlist(waitlist: WaitlistDto): Promise<Waitlist> {
     try {
-      const existingUser = await this.waitlistRepository.findByEmailOrPhone(
+      const existingUser = await this.waitlistRepository.findByEmail(
         waitlist.email,
-        waitlist.phone,
       );
       if (existingUser) {
         throw new UserExistException('User');

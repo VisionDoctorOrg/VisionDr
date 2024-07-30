@@ -20,13 +20,10 @@ export class waitlistRepository implements WaitlistRepository {
     });
   }
 
-  public async findByEmailOrPhone(
-    email: string,
-    phone: string,
-  ): Promise<Waitlist | null> {
+  public async findByEmail(email: string): Promise<Waitlist | null> {
     return await this.repository.waitlist.findFirst({
       where: {
-        OR: [{ email }, { phone }],
+        email,
       },
     });
   }
