@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseDto, Type } from 'src/common';
 
@@ -24,4 +30,12 @@ export class WaitlistDto extends BaseDto {
   type: Type;
 }
 
-export class NewsLetterDto extends BaseDto {}
+export class NewsLetterDto {
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'The email of the user',
+  })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}

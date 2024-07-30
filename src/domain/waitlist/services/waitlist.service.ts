@@ -46,7 +46,7 @@ export class WaitlistService {
 
       await this.mailService.newsLetter(email);
 
-      return 'Successfully Subscribed to newaletter';
+      return 'Successfully Subscribed to newsletter';
     } catch (error) {
       this.logger.error(
         'Error subscribing to newsletter:',
