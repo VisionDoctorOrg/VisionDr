@@ -3,18 +3,31 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { setupSwagger } from './config';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1/');
   const configService = app.get(ConfigService);
-  // console.log(configService.get<string>('BASE_URLS')?.split(',') || '*');
+
   app.enableCors({
     origin: configService.get<string>('BASE_URLS')?.split(',') || '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,PATCH',
     allowedHeaders: 'Content-Type,Authorization',
     credentials: true,
   });
+
+  app.use(helmet());
+
+  app.use(
+    rateLimit({
+      windowMs: 1000 * 60 * 60,
+      max: 1000, // 1000 requests por windowMs
+      message:
+        '⚠️  Too many request created from this IP, please try again after an hour',
+    }),
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -38,4 +51,7 @@ async function bootstrap() {
     return logger.log(`🚀 Server running on port ${configService.get('PORT')}`);
   });
 }
-bootstrap();
+bootstrap().catch((e) => {
+  Logger.error(`❌  Error starting server, ${e}`, '', 'Bootstrap', false);
+  throw e;
+});

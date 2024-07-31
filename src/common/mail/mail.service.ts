@@ -33,7 +33,7 @@ export class MailService {
     try {
       const contact = {
         email,
-        listIds: [3],
+        listIds: [8],
       };
 
       const response = await this.brevoApii.createContact(contact);
@@ -95,8 +95,8 @@ export class MailService {
       sendSmtpEmail.subject = 'New Contact Us Form Submission';
       sendSmtpEmail.htmlContent = emailHtml;
       sendSmtpEmail.sender = {
-        name: 'VisionDR',
-        email: 'ignatiuzzfrank@gmail.com',
+        name: this.configService.get<string>('SENDERNAME'),
+        email: this.configService.get<string>('MAIL_FROM'),
       };
       sendSmtpEmail.to = [{ email: adminEmail, name: 'Admin' }];
 
