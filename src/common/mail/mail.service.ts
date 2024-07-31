@@ -1,5 +1,5 @@
 // mail.service.ts
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as SibApiV3Sdk from 'sib-api-v3-sdk';
 import * as handlebars from 'handlebars';
@@ -29,19 +29,139 @@ export class MailService {
     this.brevoApii = new SibApiV3Sdk.ContactsApi();
   }
 
-  public async newsLetter(email: string): Promise<any> {
+  // public async newsLetter(email: string, ): Promise<any> {
+  //   try {
+  //     console.log('ENV:', this.configService.get<string>('NODE_ENV'));
+  //     const listId =
+  //       this.configService.get<string>('NODE_ENV') === 'development'
+  //         ? 3
+  //         : Number(this.configService.get<string>('LISTID'));
+
+  //     const contact = {
+  //       email,
+  //       listIds: [listId],
+  //     };
+
+  //     try {
+  //       const response = await this.brevoApii.createContact(contact);
+  //       this.logger.log('Subscription successful:', response);
+  //       return response;
+  //     } catch (createError) {
+  //       if (createError?.response?.text) {
+  //         const responseText = JSON.parse(createError.response.text);
+
+  //         if (responseText.code === 'duplicate_parameter') {
+  //           this.logger.log(`Contact already exists: ${email}`);
+
+  //           const existingContact = await this.brevoApii.getContactInfo(email);
+
+  //           // Check if the contact is already in the desired list
+  //           if (existingContact.listIds.includes(listId)) {
+  //             throw new HttpException(
+  //               'Already subscribed',
+  //               HttpStatus.CONFLICT,
+  //             );
+  //           }
+
+  //           // Merge existing list IDs with the new list ID
+  //           const updatedListIds = new Set([
+  //             ...existingContact.listIds,
+  //             listId,
+  //           ]);
+
+  //           const updateContact = {
+  //             listIds: Array.from(updatedListIds),
+  //           };
+
+  //           // Update the contact with the new list memberships
+  //           const updateResponse = await this.brevoApii.updateContact(
+  //             email,
+  //             updateContact,
+  //           );
+  //           this.logger.log(
+  //             `Contact already exists and updated for list ${listId}`,
+  //           );
+  //           return updateResponse;
+  //         }
+  //       }
+  //       this.logger.error('Error creating contact:', createError);
+  //       throw createError;
+  //     }
+  //   } catch (error) {
+  //     this.logger.error('Error subscribing to newsletter:', error.message);
+  //     throw error;
+  //   }
+  // }
+
+  public async subscribe(
+    email: string,
+    type: 'waitlist' | 'newsletter',
+  ): Promise<any> {
     try {
+      console.log('ENV:', this.configService.get<string>('NODE_ENV'));
+
+      const listId =
+        this.configService.get<string>('NODE_ENV') === 'development'
+          ? type === 'waitlist'
+            ? 6
+            : 8
+          : type === 'waitlist'
+            ? Number(this.configService.get<string>('WAITLIST_ID'))
+            : Number(this.configService.get<string>('NEWSLETTER_ID'));
+
       const contact = {
         email,
-        listIds: [8],
+        listIds: [listId],
       };
 
-      const response = await this.brevoApii.createContact(contact);
+      try {
+        const response = await this.brevoApii.createContact(contact);
+        this.logger.log('Subscription successful:', response);
+        return response;
+      } catch (createError) {
+        if (createError?.response?.text) {
+          const responseText = JSON.parse(createError.response.text);
 
-      this.logger.log('Subscription successful:', response);
-      return response;
+          if (responseText.code === 'duplicate_parameter') {
+            this.logger.log(`Contact already exists: ${email}`);
+
+            // Fetch existing contact details
+            const existingContact = await this.brevoApii.getContactInfo(email);
+
+            // Check if the contact is already in the desired list
+            if (existingContact.listIds.includes(listId)) {
+              throw new HttpException(
+                `Contact already exists in the ${type} list`,
+                HttpStatus.CONFLICT,
+              );
+            }
+
+            // Merge existing list IDs with the new list ID
+            const updatedListIds = new Set([
+              ...existingContact.listIds,
+              listId,
+            ]);
+
+            const updateContact = {
+              listIds: Array.from(updatedListIds),
+            };
+
+            // Update the contact with the new list memberships
+            const updateResponse = await this.brevoApii.updateContact(
+              email,
+              updateContact,
+            );
+            this.logger.log(
+              `Contact already exists and updated for ${type} list`,
+            );
+            return updateResponse;
+          }
+        }
+        this.logger.error('Error creating contact:', createError);
+        throw createError;
+      }
     } catch (error) {
-      this.logger.error('Error subscribing to newsletter:', error);
+      this.logger.error(`Error subscribing to ${type}:`, error.message);
       throw error;
     }
   }
@@ -115,7 +235,6 @@ export class MailService {
         'Error while sending contact us notification email.',
         e.stack,
       );
-      throw new Error('Failed to send contact us notification email');
     }
   }
 }

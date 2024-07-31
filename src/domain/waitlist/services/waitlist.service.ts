@@ -32,6 +32,8 @@ export class WaitlistService {
         throw new UserExistException('User');
       }
 
+      await this.mailService.subscribe(waitlist.email, 'waitlist');
+
       return await this.waitlistRepository.create(waitlist);
     } catch (error) {
       this.logger.error(error);
@@ -43,7 +45,7 @@ export class WaitlistService {
     try {
       const { email } = newsletter;
 
-      await this.mailService.newsLetter(email);
+      await this.mailService.subscribe(email, 'newsletter');
 
       return 'Successfully Subscribed to newsletter';
     } catch (error) {
