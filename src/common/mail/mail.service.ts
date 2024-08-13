@@ -172,4 +172,56 @@ export class MailService {
       );
     }
   }
+
+  public async sendResetPasswordEmail(
+    email: string,
+    resetUrl: string,
+  ): Promise<void> {
+    this.logger.log('Sending password reset email...');
+
+    try {
+      // Define the reset password template
+      const resetPasswordTemplate = `
+        <p>Hello,</p>
+        <p>You requested a password reset. Please click on the link below to reset your password:</p>
+        <a href="{{resetUrl}}">Reset Password</a>
+        <p>If you did not request this, please ignore this email.</p>
+      `;
+
+      // Compile the template
+      const compiledTemplate = handlebars.compile(resetPasswordTemplate);
+
+      // Render the template with the reset URL
+      const emailHtml = compiledTemplate({ resetUrl });
+
+      if (!emailHtml) {
+        throw new Error('Rendered email content is empty.');
+      }
+
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+      sendSmtpEmail.subject = 'Password Reset Request';
+      sendSmtpEmail.htmlContent = emailHtml;
+      sendSmtpEmail.sender = {
+        name: this.configService.get<string>('SENDERNAME'),
+        email: this.configService.get<string>('MAIL_FROM'),
+      };
+      sendSmtpEmail.to = [{ email, name: 'User' }];
+
+      this.logger.log('Sending Email Payload:', JSON.stringify(sendSmtpEmail));
+
+      const response = await this.brevoApi.sendTransacEmail(sendSmtpEmail);
+
+      this.logger.log('Brevo Response:', JSON.stringify(response));
+      this.logger.log(
+        'Password reset email sent successfully. Response: ' +
+          JSON.stringify(response),
+      );
+    } catch (e) {
+      this.logger.error('Error while sending password reset email.', e.stack);
+      throw new HttpException(
+        'Failed to send reset password email.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

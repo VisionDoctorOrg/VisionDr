@@ -14,11 +14,17 @@ import { LoginUseCase } from '../use-cases/login.use-case';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from 'src/domain/auth/guards';
 import { LoginResponse, SignupResponse } from '../interface/response-interface';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { ForgotPasswordUseCase } from '../use-cases/forgot-password.use-case';
+import { ResetPasswordUseCase } from '../use-cases/reset-password.use-case';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
+    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
     private readonly signupUseCase: SignupUseCase,
     private readonly loginUseCase: LoginUseCase,
   ) {}
@@ -51,5 +57,30 @@ export class AuthController {
       email: loginDto.email,
       password: loginDto.password,
     });
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Initiate password reset' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password reset email sent.',
+  })
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<void> {
+    await this.forgotPasswordUseCase.execute(forgotPasswordDto);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset user password' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password successfully reset.',
+  })
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<SignupResponse> {
+    return await this.resetPasswordUseCase.execute(resetPasswordDto);
   }
 }

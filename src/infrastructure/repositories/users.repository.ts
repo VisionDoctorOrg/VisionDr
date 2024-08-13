@@ -36,10 +36,22 @@ export class UserRepo implements UserRepository {
       } else if (error instanceof Prisma.PrismaClientValidationError) {
         throw new HttpException('Validation error', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException(
-        'An unexpected error occurred',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw error;
+    }
+  }
+
+  async updateUser(user: User): Promise<User> {
+    try {
+      return this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: user.password,
+          resetPasswordToken: user.resetPasswordToken,
+          resetPasswordExpires: user.resetPasswordExpires,
+        },
+      });
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -53,6 +65,9 @@ export class UserRepo implements UserRepository {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
+  async findByResetToken(token: string): Promise<User | null> {
+    return this.prisma.user.findFirst({ where: { resetPasswordToken: token } });
+  }
   // Find user by Google or LinkedIn ID
   // async findByProviderId(
   //   providerId: string,

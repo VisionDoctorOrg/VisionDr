@@ -12,6 +12,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy, LocalStrategy } from './strategies';
 import { UsersService } from '../users/services/users.service';
+import { ResetPasswordUseCase } from 'src/application/auth/use-cases/reset-password.use-case';
+import { ForgotPasswordUseCase } from 'src/application/auth/use-cases/forgot-password.use-case';
+import { MailService } from 'src/common/mail/mail.service';
 
 @Module({
   imports: [
@@ -30,9 +33,12 @@ import { UsersService } from '../users/services/users.service';
     AuthService,
     UsersService,
     PrismaService,
+    MailService,
     JwtAuthService,
     SignupUseCase,
     LoginUseCase,
+    ResetPasswordUseCase,
+    ForgotPasswordUseCase,
     AuthMapper,
     LocalStrategy,
     JwtStrategy,
