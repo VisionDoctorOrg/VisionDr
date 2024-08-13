@@ -20,9 +20,8 @@ export class AuthService {
       const userDomain = AuthMapper.toDomain(signupDto);
       userDomain.password = await hash(userDomain.password, 10);
 
-      const existingUser = await this.userRepository.findByEmailOrPhone(
+      const existingUser = await this.userRepository.findByEmail(
         userDomain.email,
-        userDomain.phone,
       );
       if (existingUser) {
         throw new UserExistException('User');
@@ -31,6 +30,7 @@ export class AuthService {
       const user = await this.userRepository.create(userDomain);
       return user;
     } catch (error) {
+      console.log(error);
       if (error instanceof Prisma.PrismaClientValidationError) {
         throw new HttpException(
           'An error occurred, please check your values',
@@ -53,9 +53,7 @@ export class AuthService {
     loginDto: LoginDto,
   ): Promise<{ user: User; accessToken: string }> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user) {
-      throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
-    }
+
     const accessToken = this.jwtService.generateAuthToken(user.id, user.email);
     return { user, accessToken };
   }

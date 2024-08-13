@@ -1,26 +1,44 @@
 import { User } from 'src/domain/users/entities/user.entity';
 import { SignupDto } from '../dtos/signup.dto';
+import { Type } from 'src/common';
+import { LoginResponse } from '../interface/response-interface';
 
 export class AuthMapper {
   static toDomain(signupDto: SignupDto): User {
     return {
-      firstName: signupDto.firstName,
-      lastName: signupDto.lastName,
+      fullName: signupDto.fullName,
+      organizationName: signupDto.organizationName,
       email: signupDto.email,
-      phone: signupDto.phone,
       password: signupDto.password,
+      type: signupDto.type,
     };
   }
 
   static toDto(user: User): User {
+    if (user.type === Type.Individual) {
+      return {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        createdAt: user.createdAt,
+      };
+    }
     return {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
+      organizationName: user.organizationName,
       email: user.email,
-      phone: user.phone,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+    };
+  }
+
+  static toLoginDto(user: User, accessToken: string): LoginResponse {
+    return {
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      createdAt: user.createdAt,
+      accessToken,
     };
   }
 }

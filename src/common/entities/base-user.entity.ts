@@ -1,9 +1,11 @@
+import { Type } from '@prisma/client';
+
 export abstract class BaseUser {
   id?: string;
-  firstName: string;
-  lastName?: string;
+  fullName?: string;
+  organizationName?: string;
+  type?: Type;
   email: string;
-  phone?: string;
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;

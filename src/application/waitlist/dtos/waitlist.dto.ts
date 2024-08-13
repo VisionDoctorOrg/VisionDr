@@ -2,6 +2,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateIf,
 } from 'class-validator';
@@ -28,6 +29,15 @@ export class WaitlistDto extends BaseDto {
   @IsNotEmpty()
   @IsEnum(Type)
   type: Type;
+
+  @ApiProperty({
+    example: '+2347012345678',
+    description: 'The phone number of the user',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  phone?: string;
 }
 
 export class NewsLetterDto {

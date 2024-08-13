@@ -12,12 +12,14 @@ import { ConfigModule } from './config';
 import { AuthModule } from './domain/auth/auth.module';
 import { WaitlistModule } from './domain/waitlist/waitlist.module';
 import { ContactUsModule } from './domain/contactUs/contactUs.module';
+import { UsersModule } from './domain/users/users.module';
 
 @Module({
   imports: [
     ConfigModule,
     PrismaModule,
     AuthModule,
+    UsersModule,
     WaitlistModule,
     ContactUsModule,
   ],

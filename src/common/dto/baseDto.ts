@@ -23,13 +23,4 @@ export class BaseDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
-  @ApiProperty({
-    example: '+2347012345678',
-    description: 'The phone number of the user',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  phone?: string;
 }

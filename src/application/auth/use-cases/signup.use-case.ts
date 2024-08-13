@@ -10,7 +10,7 @@ export class SignupUseCase {
   constructor(private readonly authService: AuthService) {}
 
   async execute(signupDto: SignupDto): Promise<User> {
-    if (!signupDto.lastName || !signupDto.password || !signupDto.phone) {
+    if (!signupDto.password) {
       throw new HttpException('Missing field(s)', HttpStatus.BAD_REQUEST);
     }
     const user = await this.authService.signup(signupDto);

@@ -13,46 +13,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  firstName String
-  lastName  String
-  email     String   @unique
-  phone     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  //Relationships
+model User {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  fullName         String?
+  organizationName String?
+  email            String       @unique
+  type             Type?
+  password         String
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  // googleId         String?      @unique
+  // linkedinId       String?      @unique
+  authProvider     AuthProvider
 }
 
 model Waitlist {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  fullName String
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  fullName         String
   organizationName String?
-  type Type
-  email    String @unique
-  phone    String
-  status   String @default("waiting")
+  type             Type
+  email            String  @unique
+  phone            String
+  status           String  @default("waiting")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-
 model ContactUs {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  type Type
-  email    String 
-  phone    String
-  message   String 
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  type    Type
+  email   String
+  phone   String
+  message String
 
   createdAt DateTime @default(now())
 }
-
 
 enum Type {
   Individual
   Organization
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  LINKEDIN
 }

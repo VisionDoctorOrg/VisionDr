@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseDto, Type } from 'src/common';
 
@@ -21,4 +21,13 @@ export class ContactUsDto extends BaseDto {
   @IsNotEmpty()
   @IsEnum(Type)
   type: Type;
+
+  @ApiProperty({
+    example: '+2347012345678',
+    description: 'The phone number of the user',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  phone?: string;
 }
