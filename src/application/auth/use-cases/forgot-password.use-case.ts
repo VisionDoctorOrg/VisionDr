@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto';
 import { MailService } from 'src/common/mail/mail.service';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ConfigService } from '@nestjs/config';
+import { response } from '../interface/response-interface';
 
 @Injectable()
 export class ForgotPasswordUseCase {
@@ -13,7 +14,7 @@ export class ForgotPasswordUseCase {
     private readonly mailService: MailService,
   ) {}
 
-  async execute(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
+  async execute(forgotPasswordDto: ForgotPasswordDto): Promise<response> {
     const user = await this.authService.findByEmail(forgotPasswordDto.email);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -24,10 +25,16 @@ export class ForgotPasswordUseCase {
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    await this.authService.forgotPassword(user);
+    const response = await this.authService.forgotPassword(user);
 
     // Send reset email
     const resetUrl = `${this.configService.get<string>('FRONT_URL')}/reset-password?token=${resetToken}`;
-    await this.mailService.sendResetPasswordEmail(user.email, resetUrl);
+    await this.mailService.sendResetPasswordEmail(
+      user.email,
+      user.fullName,
+      resetUrl,
+    );
+
+    return response;
   }
 }

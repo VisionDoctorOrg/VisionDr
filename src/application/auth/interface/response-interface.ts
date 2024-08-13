@@ -7,10 +7,12 @@ export interface LoginResponse {
   accessToken: string;
 }
 
-export interface SignupResponse {
+export interface response {
+  status?: boolean;
+  message?: string;
   id?: string;
   fullName?: string;
   organizationName?: string;
-  email: string;
+  email?: string;
   createdAt?: Date;
 }

@@ -13,7 +13,7 @@ import { SignupUseCase } from '../use-cases/signup.use-case';
 import { LoginUseCase } from '../use-cases/login.use-case';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from 'src/domain/auth/guards';
-import { LoginResponse, SignupResponse } from '../interface/response-interface';
+import { LoginResponse, response } from '../interface/response-interface';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ForgotPasswordUseCase } from '../use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from '../use-cases/reset-password.use-case';
@@ -36,9 +36,13 @@ export class AuthController {
     description: 'User successfully registered.',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  async signup(@Body() signupDto: SignupDto): Promise<SignupResponse> {
+  async signup(@Body() signupDto: SignupDto): Promise<response> {
     const user = await this.signupUseCase.execute(signupDto);
-    return AuthMapper.toDto(user);
+    return {
+      status: true,
+      message: 'Signup successfully',
+      ...user,
+    };
   }
 
   @UseGuards(LocalAuthGuard)
@@ -67,8 +71,13 @@ export class AuthController {
   })
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
-  ): Promise<void> {
-    await this.forgotPasswordUseCase.execute(forgotPasswordDto);
+  ): Promise<response> {
+    const user = await this.forgotPasswordUseCase.execute(forgotPasswordDto);
+
+    return {
+      status: true,
+      message: 'Email successfully sent',
+    };
   }
 
   @Post('reset-password')
@@ -79,7 +88,12 @@ export class AuthController {
   })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
-  ): Promise<SignupResponse> {
-    return await this.resetPasswordUseCase.execute(resetPasswordDto);
+  ): Promise<response> {
+    const response = await this.resetPasswordUseCase.execute(resetPasswordDto);
+    return {
+      status: true,
+      message: 'Password successfully reset',
+      ...response,
+    };
   }
 }

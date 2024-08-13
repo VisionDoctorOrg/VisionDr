@@ -175,6 +175,7 @@ export class MailService {
 
   public async sendResetPasswordEmail(
     email: string,
+    fullName: string,
     resetUrl: string,
   ): Promise<void> {
     this.logger.log('Sending password reset email...');
@@ -182,7 +183,7 @@ export class MailService {
     try {
       // Define the reset password template
       const resetPasswordTemplate = `
-        <p>Hello,</p>
+        <p>Hello {{fullName}},</p>
         <p>You requested a password reset. Please click on the link below to reset your password:</p>
         <a href="{{resetUrl}}">Reset Password</a>
         <p>If you did not request this, please ignore this email.</p>
@@ -192,7 +193,7 @@ export class MailService {
       const compiledTemplate = handlebars.compile(resetPasswordTemplate);
 
       // Render the template with the reset URL
-      const emailHtml = compiledTemplate({ resetUrl });
+      const emailHtml = compiledTemplate({ resetUrl, fullName });
 
       if (!emailHtml) {
         throw new Error('Rendered email content is empty.');
