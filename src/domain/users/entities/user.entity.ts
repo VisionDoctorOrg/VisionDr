@@ -5,4 +5,5 @@ export class User extends BaseUser {
   linkedinId?: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
+  confirmPassword?: string;
 }

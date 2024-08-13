@@ -13,6 +13,15 @@ export class SignupDto extends BaseDto {
   password: string;
 
   @ApiProperty({
+    example: 'StrongPassword123!',
+    description: 'Confirm password',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsString()
+  confirmPassword: string;
+
+  @ApiProperty({
     example: 'ABC Company',
     description: 'The Company name (required if type is Organization)',
     required: false,

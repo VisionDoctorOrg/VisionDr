@@ -59,7 +59,6 @@ export class AuthController {
     });
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('forgot-password')
   @ApiOperation({ summary: 'Initiate password reset' })
   @ApiResponse({

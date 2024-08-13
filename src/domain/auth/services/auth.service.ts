@@ -22,6 +22,14 @@ export class AuthService {
   async signup(signupDto: SignupDto): Promise<User> {
     try {
       const userDomain = AuthMapper.toDomain(signupDto);
+
+      if (userDomain.password !== userDomain.confirmPassword) {
+        throw new HttpException(
+          'Passwords do not match',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       userDomain.password = await hash(userDomain.password, 10);
 
       const existingUser = await this.userRepository.findByEmail(

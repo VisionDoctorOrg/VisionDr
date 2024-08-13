@@ -10,6 +10,7 @@ export class AuthMapper {
       organizationName: signupDto.organizationName,
       email: signupDto.email,
       password: signupDto.password,
+      confirmPassword: signupDto.confirmPassword,
       type: signupDto.type,
     };
   }

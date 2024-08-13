@@ -22,7 +22,7 @@ export class ForgotPasswordUseCase {
     // Generate reset token
     const resetToken = randomBytes(32).toString('hex');
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+    user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     await this.authService.forgotPassword(user);
 
