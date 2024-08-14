@@ -1,7 +1,7 @@
-// src/infrastructure/auth/strategies/linkedin.strategy.ts
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { Strategy, VerifyCallback } from 'passport-linkedin-oauth2';
+import { Strategy } from 'passport-linkedin-oauth2';
+import { VerifyCallback } from 'passport-google-oauth20';
 
 @Injectable()
 export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {

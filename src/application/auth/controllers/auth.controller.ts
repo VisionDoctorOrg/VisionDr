@@ -4,11 +4,9 @@ import {
   Body,
   HttpStatus,
   UseGuards,
-  Request,
   Get,
   Req,
 } from '@nestjs/common';
-import { AuthMapper } from '../mappers/auth.mapper';
 import { SignupDto } from '../dtos/signup.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { SignupUseCase } from '../use-cases/signup.use-case';
@@ -102,14 +100,16 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {
-    console.log(req);
-  }
+  async googleAuth(@Req() req) {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
-    console.log(req);
+    console.log(
+      'Received call back code........................................................',
+      req,
+    );
+    console.log(req.user);
   }
 
   @Get('linkedin')
