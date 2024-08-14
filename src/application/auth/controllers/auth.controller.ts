@@ -5,6 +5,8 @@ import {
   HttpStatus,
   UseGuards,
   Request,
+  Get,
+  Req,
 } from '@nestjs/common';
 import { AuthMapper } from '../mappers/auth.mapper';
 import { SignupDto } from '../dtos/signup.dto';
@@ -18,6 +20,7 @@ import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ForgotPasswordUseCase } from '../use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from '../use-cases/reset-password.use-case';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -95,5 +98,15 @@ export class AuthController {
       message: 'Password successfully reset',
       ...response,
     };
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req) {
+    console.log(req);
   }
 }

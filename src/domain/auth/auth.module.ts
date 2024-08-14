@@ -15,6 +15,8 @@ import { UsersService } from '../users/services/users.service';
 import { ResetPasswordUseCase } from 'src/application/auth/use-cases/reset-password.use-case';
 import { ForgotPasswordUseCase } from 'src/application/auth/use-cases/forgot-password.use-case';
 import { MailService } from 'src/common/mail/mail.service';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { LinkedInStrategy } from './strategies/linkedin.strategy';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { MailService } from 'src/common/mail/mail.service';
     AuthMapper,
     LocalStrategy,
     JwtStrategy,
+    GoogleStrategy,
+    LinkedInStrategy,
     {
       provide: UserRepository,
       useClass: UserRepo,
