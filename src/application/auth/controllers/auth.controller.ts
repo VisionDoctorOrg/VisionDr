@@ -108,7 +108,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
-    console.log('Received call back code:', JSON.stringify(req, null, 2));
+    console.log('Received call back code:', req);
     if (req.user) {
       console.log('User:', req.user);
     } else {
