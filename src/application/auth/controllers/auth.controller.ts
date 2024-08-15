@@ -108,11 +108,11 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
-    console.log(
-      'Received call back code........................................................',
-      req,
-    );
-    console.log(req.user);
+    console.log('Received call back code:', req.user); // This should log the user object
+    if (!req.user) {
+      throw new Error('User not found');
+    }
+    // Proceed with saving the user to the database or other logic
   }
 
   @Get('linkedin')
