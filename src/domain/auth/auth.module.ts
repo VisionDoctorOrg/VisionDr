@@ -17,9 +17,11 @@ import { ForgotPasswordUseCase } from 'src/application/auth/use-cases/forgot-pas
 import { MailService } from 'src/common/mail/mail.service';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { LinkedInStrategy } from './strategies/linkedin.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    PassportModule.register({ session: false }),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
