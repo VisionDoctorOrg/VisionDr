@@ -1,15 +1,11 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { hash, compare } from 'bcryptjs';
-import { randomBytes } from 'crypto';
 import { AuthMapper } from 'src/application/auth/mappers/auth.mapper';
 import { SignupDto } from 'src/application/auth/dtos/signup.dto';
 import { JwtAuthService, UserExistException } from 'src/common';
-import { LoginDto } from 'src/application/auth/dtos/login.dto';
 import { Prisma } from '@prisma/client';
 import { User } from 'src/domain/users/entities/user.entity';
 import { UserRepository } from 'src/domain/users/interfaces/user-repository.interface';
-import { ForgotPasswordDto } from 'src/application/auth/dtos/forgot-password.dto';
-import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDto } from 'src/application/auth/dtos/reset-password.dto';
 
 @Injectable()
