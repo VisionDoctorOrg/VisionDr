@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { setupSwagger } from './config';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+// import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +29,8 @@ async function bootstrap() {
         '⚠️  Too many request created from this IP, please try again after an hour',
     }),
   );
+
+  //app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({

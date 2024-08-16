@@ -6,6 +6,7 @@ import {
   UseGuards,
   Get,
   Req,
+  Request,
 } from '@nestjs/common';
 import { SignupDto } from '../dtos/signup.dto';
 import { LoginDto } from '../dtos/login.dto';
@@ -57,11 +58,11 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized.',
   })
-  async login(@Body() loginDto: LoginDto): Promise<LoginResponse> {
-    return this.loginUseCase.execute({
-      email: loginDto.email,
-      password: loginDto.password,
-    });
+  async login(
+    @Body() loginDto: LoginDto,
+    @Request() req,
+  ): Promise<LoginResponse> {
+    return this.loginUseCase.execute(req.user);
   }
 
   @Post('forgot-password')
@@ -73,7 +74,7 @@ export class AuthController {
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<response> {
-    const user = await this.forgotPasswordUseCase.execute(forgotPasswordDto);
+    await this.forgotPasswordUseCase.execute(forgotPasswordDto);
 
     return {
       status: true,

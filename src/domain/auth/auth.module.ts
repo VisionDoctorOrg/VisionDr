@@ -21,7 +21,7 @@ import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
-    PassportModule.register({ session: false }),
+    PassportModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -53,5 +53,6 @@ import { PassportModule } from '@nestjs/passport';
       useClass: UserRepo,
     },
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

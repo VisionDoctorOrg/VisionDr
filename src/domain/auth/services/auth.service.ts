@@ -65,11 +65,8 @@ export class AuthService {
     return await this.userRepository.findByEmail(email);
   }
 
-  async login(
-    loginDto: LoginDto,
-  ): Promise<{ user: User; accessToken: string }> {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
-
+  async login(email: string): Promise<{ user: User; accessToken: string }> {
+    const user = await this.findByEmail(email);
     const accessToken = this.jwtService.generateAuthToken(user.id, user.email);
     return { user, accessToken };
   }

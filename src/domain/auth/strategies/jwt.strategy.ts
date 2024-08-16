@@ -20,6 +20,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate({ userId }: TokenPayload): Promise<User> {
+    console.log(
+      "configService.get('JWT_SECRET'),",
+      this.configService.get('JWT_SECRET'),
+    );
     const user = await this.usersService.findUserById(userId);
     if (!user) {
       throw new UnauthorizedException();
