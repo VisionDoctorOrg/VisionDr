@@ -13,7 +13,7 @@ import { LoginDto } from '../dtos/login.dto';
 import { SignupUseCase } from '../use-cases/signup.use-case';
 import { LoginUseCase } from '../use-cases/login.use-case';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { LocalAuthGuard } from 'src/domain/auth/guards';
+import { GoogleOauthGuard, LocalAuthGuard } from 'src/domain/auth/guards';
 import { LoginResponse, response } from '../interface/response-interface';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ForgotPasswordUseCase } from '../use-cases/forgot-password.use-case';
@@ -100,16 +100,14 @@ export class AuthController {
   }
 
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleOauthGuard)
   async googleAuth(@Req() req) {
     console.log('req.user from google brfore the callback hook', req.user);
-    console.log('req from google brfore the callback hook', req);
   }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
-    console.log('Received call back code:', req);
     if (req.user) {
       console.log('User:', req.user);
     } else {

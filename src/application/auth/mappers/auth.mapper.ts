@@ -4,7 +4,7 @@ import { Type } from 'src/common';
 import { LoginResponse } from '../interface/response-interface';
 
 export class AuthMapper {
-  static toDomain(signupDto: SignupDto): User {
+  static toDomain(signupDto: SignupDto): SignupDto {
     return {
       fullName: signupDto.fullName,
       organizationName: signupDto.organizationName,
@@ -21,6 +21,7 @@ export class AuthMapper {
         id: user.id,
         fullName: user.fullName,
         email: user.email,
+        authProvider: user.authProvider,
         createdAt: user.createdAt,
       };
     }
@@ -28,6 +29,7 @@ export class AuthMapper {
       id: user.id,
       fullName: user.fullName,
       organizationName: user.organizationName,
+      authProvider: user.authProvider,
       email: user.email,
       createdAt: user.createdAt,
     };

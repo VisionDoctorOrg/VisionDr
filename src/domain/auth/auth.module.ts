@@ -6,7 +6,7 @@ import { LoginUseCase } from '../../application/auth/use-cases/login.use-case';
 import { AuthMapper } from '../../application/auth/mappers/auth.mapper';
 import { AuthService } from './services/auth.service';
 import { JwtAuthService, PrismaService } from 'src/common';
-import { UserRepo } from 'src/infrastructure/repositories/users.repository';
+import { userRepository } from 'src/infrastructure/repositories/users.repository';
 import { UserRepository } from '../users/interfaces/user-repository.interface';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -50,7 +50,7 @@ import { PassportModule } from '@nestjs/passport';
     LinkedInStrategy,
     {
       provide: UserRepository,
-      useClass: UserRepo,
+      useClass: userRepository,
     },
   ],
   exports: [AuthService],

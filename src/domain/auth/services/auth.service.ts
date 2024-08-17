@@ -1,18 +1,25 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { hash, compare } from 'bcryptjs';
 import { AuthMapper } from 'src/application/auth/mappers/auth.mapper';
 import { SignupDto } from 'src/application/auth/dtos/signup.dto';
 import { JwtAuthService, UserExistException } from 'src/common';
-import { Prisma } from '@prisma/client';
+import { AuthProvider, Prisma } from '@prisma/client';
 import { User } from 'src/domain/users/entities/user.entity';
-import { UserRepository } from 'src/domain/users/interfaces/user-repository.interface';
 import { ResetPasswordDto } from 'src/application/auth/dtos/reset-password.dto';
+import { UsersService } from 'src/domain/users/services/users.service';
 
 @Injectable()
 export class AuthService {
+  private logger = new Logger('AuthService');
   constructor(
-    @Inject(UserRepository) private readonly userRepository: UserRepository,
     private readonly jwtService: JwtAuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   async signup(signupDto: SignupDto): Promise<User> {
@@ -28,14 +35,17 @@ export class AuthService {
 
       userDomain.password = await hash(userDomain.password, 10);
 
-      const existingUser = await this.userRepository.findByEmail(
+      const existingUser = await this.usersService.findByEmail(
         userDomain.email,
       );
       if (existingUser) {
         throw new UserExistException('User');
       }
 
-      const user = await this.userRepository.create(userDomain);
+      const user = await this.usersService.create({
+        ...userDomain,
+        authProvider: AuthProvider.EMAIL,
+      });
       return user;
     } catch (error) {
       console.log(error);
@@ -50,7 +60,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.usersService.findByEmail(email);
     if (user && (await compare(password, user.password))) {
       return user;
     }
@@ -58,7 +68,41 @@ export class AuthService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findByEmail(email);
+    return await this.usersService.findByEmail(email);
+  }
+
+  async validateGoogleUser(userData: User): Promise<User> {
+    this.logger.debug('Oauth validation starting...', userData);
+    const { email, googleId, authProvider, picture } = userData;
+
+    // Try to find user by Google ID first
+    let user = await this.usersService.findByProviderId(
+      googleId,
+      authProvider.toUpperCase() as AuthProvider,
+    );
+
+    if (!user) {
+      this.logger.debug('User notFound by googleId, finding by email');
+      // If not found by Google ID, find by email
+      user = await this.usersService.findByEmail(email);
+
+      if (user) {
+        user.googleId = googleId;
+        user.picture = picture;
+        user = await this.usersService.updateUser(user);
+        this.logger.debug('User Found by email, updating record', user);
+      } else {
+        // If user doesn't exist, create a new one
+        user = await this.usersService.create(userData, authProvider);
+        this.logger.debug(
+          'User notFound by email or google, creating record',
+          user,
+        );
+      }
+    }
+
+    this.logger.debug('User Found by googleId, returning record');
+    return user;
   }
 
   async login(email: string): Promise<{ user: User; accessToken: string }> {
@@ -68,14 +112,13 @@ export class AuthService {
   }
 
   async forgotPassword(user: User): Promise<User> {
-    return await this.userRepository.updateUser(user);
+    return await this.usersService.updateUser(user);
   }
 
   public async resetPassword(
     resetPasswordDto: ResetPasswordDto,
   ): Promise<User> {
-    // Find the user by the reset token
-    const user = await this.userRepository.findByResetToken(
+    const user = await this.usersService.findByResetToken(
       resetPasswordDto.token,
     );
 
@@ -87,17 +130,14 @@ export class AuthService {
       );
     }
 
-    // Check if new password and confirm password match
     if (resetPasswordDto.newPassword !== resetPasswordDto.confirmPassword) {
       throw new HttpException('Passwords do not match', HttpStatus.BAD_REQUEST);
     }
 
-    // Hash the new password and reset the token fields
     user.password = await hash(resetPasswordDto.newPassword, 10);
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
 
-    // Save the updated user
-    return await this.userRepository.updateUser(user);
+    return await this.usersService.updateUser(user);
   }
 }
