@@ -9,27 +9,27 @@ export class userRepository implements UserRepository {
   private logger = new Logger('userRepository');
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(user: User, authProvider?: AuthProvider): Promise<User> {
+  async create(user: User): Promise<User> {
     try {
       const data: User = {
         fullName: user.fullName,
         email: user.email,
         picture: user.picture,
-        authProvider,
+        authProvider: user.authProvider,
         organizationName: user.organizationName
           ? user.organizationName
           : undefined,
       };
-
-      if (authProvider.toUpperCase() === AuthProvider.EMAIL) {
+      this.logger.verbose('AuthProvider:', data);
+      if (user.authProvider.toUpperCase() === AuthProvider.EMAIL) {
         data.password = user.password;
         data.authProvider = AuthProvider.EMAIL;
         data.type = user.type;
-      } else if (authProvider.toUpperCase() === AuthProvider.GOOGLE) {
+      } else if (user.authProvider.toUpperCase() === AuthProvider.GOOGLE) {
         data.googleId = user.googleId;
         data.picture = user.picture;
         data.authProvider = AuthProvider.GOOGLE;
-      } else if (authProvider.toUpperCase() === AuthProvider.LINKEDIN) {
+      } else if (user.authProvider.toUpperCase() === AuthProvider.LINKEDIN) {
         data.linkedinId = user.linkedinId;
         data.picture = user.picture;
         data.authProvider = AuthProvider.LINKEDIN;

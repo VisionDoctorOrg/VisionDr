@@ -61,6 +61,14 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
+
+    if (user && user.googleId && user.password === null) {
+      throw new HttpException(
+        'Please sign in with Google or reset your password',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (user && (await compare(password, user.password))) {
       return user;
     }
@@ -72,10 +80,10 @@ export class AuthService {
   }
 
   async validateGoogleUser(userData: User): Promise<User> {
-    this.logger.debug('Oauth validation starting...', userData);
+    this.logger.debug('Oauth validation starting...');
     const { email, googleId, authProvider, picture } = userData;
 
-    // Try to find user by Google ID first
+    // Try to find user by Google ID
     let user = await this.usersService.findByProviderId(
       googleId,
       authProvider.toUpperCase() as AuthProvider,
@@ -93,7 +101,7 @@ export class AuthService {
         this.logger.debug('User Found by email, updating record', user);
       } else {
         // If user doesn't exist, create a new one
-        user = await this.usersService.create(userData, authProvider);
+        user = await this.usersService.create({ ...userData, authProvider });
         this.logger.debug(
           'User notFound by email or google, creating record',
           user,
@@ -102,6 +110,38 @@ export class AuthService {
     }
 
     this.logger.debug('User Found by googleId, returning record');
+    return user;
+  }
+
+  async validateLinkedInUser(userData: User): Promise<User> {
+    this.logger.debug('LinkedInOauth validation starting...');
+    const { email, linkedinId, authProvider, picture } = userData;
+
+    let user = await this.usersService.findByProviderId(
+      linkedinId,
+      authProvider.toUpperCase() as AuthProvider,
+    );
+
+    if (!user) {
+      this.logger.debug('User notFound by linkedinId, finding by email');
+
+      user = await this.usersService.findByEmail(email);
+
+      if (user) {
+        user.linkedinId = linkedinId;
+        user.picture = picture;
+        user = await this.usersService.updateUser(user);
+        this.logger.debug('User Found by email, updating record', user);
+      } else {
+        user = await this.usersService.create({ ...userData, authProvider });
+        this.logger.debug(
+          'User notFound by email or linkedin, creating record',
+          user,
+        );
+      }
+    }
+
+    this.logger.debug('returning record');
     return user;
   }
 

@@ -9,8 +9,9 @@ export class UsersService {
     @Inject(UserRepository) private readonly userRepository: UserRepository,
   ) {}
 
-  async create(user: User, authProvider?: AuthProvider): Promise<User> {
-    return await this.userRepository.create(user, authProvider);
+  async create(user: User): Promise<User> {
+    console.log(user);
+    return await this.userRepository.create(user);
   }
 
   async updateUser(user: User): Promise<User> {
