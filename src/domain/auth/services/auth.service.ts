@@ -96,7 +96,8 @@ export class AuthService {
 
       if (user) {
         user.googleId = googleId;
-        user.picture = picture;
+        // user.picture = picture;
+
         user = await this.usersService.updateUser(user);
         this.logger.debug('User Found by email, updating record', user);
       } else {

@@ -11,10 +11,9 @@ export class userRepository implements UserRepository {
 
   async create(user: User): Promise<User> {
     try {
-      const data: User = {
+      const data: any = {
         fullName: user.fullName,
         email: user.email,
-        picture: user.picture,
         authProvider: user.authProvider,
         organizationName: user.organizationName
           ? user.organizationName
@@ -27,16 +26,14 @@ export class userRepository implements UserRepository {
         data.type = user.type;
       } else if (user.authProvider.toUpperCase() === AuthProvider.GOOGLE) {
         data.googleId = user.googleId;
-        data.picture = user.picture;
         data.authProvider = AuthProvider.GOOGLE;
       } else if (user.authProvider.toUpperCase() === AuthProvider.LINKEDIN) {
         data.linkedinId = user.linkedinId;
-        data.picture = user.picture;
         data.authProvider = AuthProvider.LINKEDIN;
       }
 
       this.logger.verbose('User to be created:', data);
-      return this.prisma.user.create({ data });
+      return await this.prisma.user.create({ data });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -49,35 +46,46 @@ export class userRepository implements UserRepository {
     }
   }
 
-  async updateUser(user: User): Promise<User> {
+  async updateUser(userData: User): Promise<User> {
     try {
+      const { email, DOB, gender, occupation, hobbies } = userData;
+      const user = await this.findByEmail(email);
       this.logger.warn('User to be updated:', user);
-      return this.prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password: user.password,
-          resetPasswordToken: user.resetPasswordToken,
-          resetPasswordExpires: user.resetPasswordExpires,
-          picture: user?.picture,
-          googleId: user?.googleId,
-          linkedinId: user?.linkedinId,
-        },
-      });
+      if (user) {
+        return await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            password: user.password,
+            resetPasswordToken: user?.resetPasswordToken,
+            resetPasswordExpires: user?.resetPasswordExpires,
+            linkedinId: user?.linkedinId,
+            googleId: user?.googleId,
+            email: user.email,
+            DOB,
+            gender,
+            occupation,
+            hobbies,
+          },
+          include: { image: true },
+        });
+      }
     } catch (error) {
       throw error;
     }
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+    return await this.prisma.user.findUnique({ where: { id } });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { email } });
+    return await this.prisma.user.findUnique({ where: { email } });
   }
 
   async findByResetToken(token: string): Promise<User | null> {
-    return this.prisma.user.findFirst({ where: { resetPasswordToken: token } });
+    return await this.prisma.user.findFirst({
+      where: { resetPasswordToken: token },
+    });
   }
 
   // Find user by Google or LinkedIn ID
@@ -85,7 +93,7 @@ export class userRepository implements UserRepository {
     providerId: string,
     provider: AuthProvider,
   ): Promise<User | null> {
-    return this.prisma.user.findFirst({
+    return await this.prisma.user.findFirst({
       where: {
         OR: [
           { googleId: provider === 'GOOGLE' ? providerId : undefined },

@@ -36,7 +36,6 @@ import { PassportModule } from '@nestjs/passport';
   providers: [
     AuthService,
     UsersService,
-    PrismaService,
     MailService,
     JwtAuthService,
     SignupUseCase,
