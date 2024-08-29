@@ -87,11 +87,17 @@ export class userRepository implements UserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({ where: { id } });
+    return await this.prisma.user.findUnique({
+      where: { id },
+      include: { image: true },
+    });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({ where: { email } });
+    return await this.prisma.user.findUnique({
+      where: { email },
+      include: { image: true },
+    });
   }
 
   async findByResetToken(token: string): Promise<User | null> {

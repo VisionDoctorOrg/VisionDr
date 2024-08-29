@@ -1,3 +1,5 @@
+import { Image, RefractiveErrorCheck } from '@prisma/client';
+
 export interface LoginResponse {
   id?: string;
   fullName?: string;
@@ -5,6 +7,8 @@ export interface LoginResponse {
   email: string;
   createdAt?: Date;
   accessToken: string;
+  image?: Image;
+  refractiveErrorCheck?: RefractiveErrorCheck;
 }
 
 export interface response {

@@ -13,6 +13,7 @@ import { AuthModule } from './domain/auth/auth.module';
 import { WaitlistModule } from './domain/waitlist/waitlist.module';
 import { ContactUsModule } from './domain/contactUs/contactUs.module';
 import { UsersModule } from './domain/users/users.module';
+import { RefractiveErrorCheckModule } from './domain/refractiveErrorCheck';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UsersModule } from './domain/users/users.module';
     UsersModule,
     WaitlistModule,
     ContactUsModule,
+    RefractiveErrorCheckModule,
   ],
   controllers: [AppController],
   providers: [

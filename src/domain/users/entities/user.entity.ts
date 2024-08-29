@@ -1,4 +1,4 @@
-import { AuthProvider, Image } from '@prisma/client';
+import { AuthProvider, Image, RefractiveErrorCheck } from '@prisma/client';
 import { BaseUser } from 'src/common';
 
 export class User extends BaseUser {
@@ -16,4 +16,5 @@ export class User extends BaseUser {
   hobbies?: string;
   imageId?: string;
   image?: Image;
+  refractiveErrorCheck?: RefractiveErrorCheck;
 }

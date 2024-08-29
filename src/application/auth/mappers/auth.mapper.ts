@@ -32,6 +32,8 @@ export class AuthMapper {
       authProvider: user.authProvider,
       email: user.email,
       createdAt: user.createdAt,
+      image: user.image,
+      refractiveErrorCheck: user.refractiveErrorCheck,
     };
   }
 
@@ -42,6 +44,8 @@ export class AuthMapper {
       email: user.email,
       createdAt: user.createdAt,
       accessToken,
+      image: user.image,
+      refractiveErrorCheck: user.refractiveErrorCheck,
     };
   }
 }
