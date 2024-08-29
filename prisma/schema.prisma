@@ -24,6 +24,7 @@ model User {
   gender               String?
   occupation           String?
   hobbies              String?
+  phoneNumber          String?
   subscriptionActive   Status       @default(Inactive)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt

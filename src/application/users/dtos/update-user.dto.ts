@@ -49,5 +49,13 @@ export class UpdateUserDto {
   })
   @IsOptional()
   @IsString()
-  email: string;
+  email?: string;
+
+  @ApiProperty({
+    example: '2348098765',
+    description: 'Users phone number',
+  })
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
 }

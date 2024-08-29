@@ -48,7 +48,16 @@ export class userRepository implements UserRepository {
 
   async updateUser(userData: User): Promise<User> {
     try {
-      const { email, DOB, gender, occupation, hobbies, imageId } = userData;
+      const {
+        email,
+        DOB,
+        gender,
+        occupation,
+        hobbies,
+        imageId,
+        phoneNumber,
+        fullName,
+      } = userData;
       const user = await this.findByEmail(email);
       this.logger.warn('User to be updated:', userData);
       if (user) {
@@ -61,10 +70,12 @@ export class userRepository implements UserRepository {
             linkedinId: user?.linkedinId,
             googleId: user?.googleId,
             email: user.email,
+            fullName,
             DOB,
             gender,
             occupation,
             hobbies,
+            phoneNumber,
             imageId,
           },
           include: { image: true },

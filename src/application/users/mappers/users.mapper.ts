@@ -21,9 +21,11 @@ export class UsersMapper {
       gender: user.gender,
       hobbies: user.hobbies,
       occupation: user.occupation,
+      phoneNumber: user.phoneNumber,
       email: user.email,
       authProvider: user.authProvider,
       createdAt: user.createdAt,
+      image: user.image,
     };
   }
 }
