@@ -48,9 +48,9 @@ export class userRepository implements UserRepository {
 
   async updateUser(userData: User): Promise<User> {
     try {
-      const { email, DOB, gender, occupation, hobbies } = userData;
+      const { email, DOB, gender, occupation, hobbies, imageId } = userData;
       const user = await this.findByEmail(email);
-      this.logger.warn('User to be updated:', user);
+      this.logger.warn('User to be updated:', userData);
       if (user) {
         return await this.prisma.user.update({
           where: { id: user.id },
@@ -65,6 +65,7 @@ export class userRepository implements UserRepository {
             gender,
             occupation,
             hobbies,
+            imageId,
           },
           include: { image: true },
         });
