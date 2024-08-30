@@ -34,11 +34,26 @@ model User {
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
 
-  subscriptions        Subscription[]
-  refractiveErrorCheck RefractiveErrorCheck[]
+  subscriptions Subscription[]
 
   imageId String? @db.ObjectId
   image   Image?  @relation(fields: [imageId], references: [id])
+
+  refractiveErrorCheck RefractiveErrorCheck?
+}
+
+model RefractiveErrorCheck {
+  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
+  medicalHistory          Json
+  visionSymptoms          Json
+  currentVisionCorrection Json
+  lifestyleVisualDemands  Json
+  additionalInformation   Json
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  userId String? @unique @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
 }
 
 model Subscription {
@@ -87,20 +102,6 @@ model ContactUs {
   message String
 
   createdAt DateTime @default(now())
-}
-
-model RefractiveErrorCheck {
-  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId                  String   @db.ObjectId
-  medicalHistory          Json
-  visionSymptoms          Json
-  currentVisionCorrection Json
-  lifestyleVisualDemands  Json
-  additionalInformation   Json
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Type {

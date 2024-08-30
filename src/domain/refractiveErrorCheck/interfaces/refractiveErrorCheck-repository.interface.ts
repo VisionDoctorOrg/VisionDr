@@ -5,4 +5,8 @@ export const RefractiveErrorCheckRepository = Symbol(
 );
 
 export interface RefractiveErrorCheckRepository
-  extends IRepository<RefractiveErrorCheck> {}
+  extends IRepository<RefractiveErrorCheck> {
+  findRefractiveErrorCheckByUserId(
+    userId: string,
+  ): Promise<RefractiveErrorCheck | null>;
+}

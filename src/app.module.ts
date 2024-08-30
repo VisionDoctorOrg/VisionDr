@@ -1,13 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import {
-  AllExceptionsFilter,
-  JwtAuthService,
-  PrismaModule,
-  UserInterceptor,
-} from './common';
+import { AllExceptionsFilter, JwtAuthService, PrismaModule } from './common';
 import { ConfigModule } from './config';
 import { AuthModule } from './domain/auth/auth.module';
 import { WaitlistModule } from './domain/waitlist/waitlist.module';
@@ -29,10 +23,6 @@ import { RefractiveErrorCheckModule } from './domain/refractiveErrorCheck';
   providers: [
     AppService,
     JwtAuthService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: UserInterceptor,
-    },
     {
       provide: 'APP_FILTER',
       useClass: AllExceptionsFilter,

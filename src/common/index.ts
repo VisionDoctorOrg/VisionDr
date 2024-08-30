@@ -7,7 +7,6 @@ export * from './exceptions';
 export * from './prisma';
 export * from './filters';
 export * from './cloudinary';
-export * from './interceptors';
 export * from './dto';
 export * from './enums';
 export * from './validators';

@@ -23,6 +23,18 @@ export class RefractiveErrorCheckService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
+    const refractiveErrorCheck =
+      await this.refractiveErrorCheckRepository.findRefractiveErrorCheckByUserId(
+        user.id,
+      );
+
+    if (refractiveErrorCheck) {
+      throw new HttpException(
+        'Response already completed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const dataToSave = {
       userId: user.id,
       medicalHistory: responses.medicalHistory,

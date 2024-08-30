@@ -14,15 +14,30 @@ export class refractiveErrorCheckRepository
   async create(data: any): Promise<RefractiveErrorCheck> {
     try {
       return await this.prisma.refractiveErrorCheck.create({
-        data,
-        include: { user: true },
+        data: {
+          medicalHistory: data.medicalHistory,
+          visionSymptoms: data.visionSymptoms,
+          currentVisionCorrection: data.currentVisionCorrection,
+          lifestyleVisualDemands: data.lifestyleVisualDemands,
+          additionalInformation: data.additionalInformation,
+          user: {
+            connect: {
+              id: data.userId,
+            },
+          },
+        },
       });
     } catch (error) {
-      this.logger.error(error.message);
-      if (error instanceof Prisma.PrismaClientValidationError) {
-        throw new HttpException('Validation error', HttpStatus.BAD_REQUEST);
-      }
+      console.error('Error creating RefractiveErrorCheck:', error);
       throw error;
     }
+  }
+
+  async findRefractiveErrorCheckByUserId(
+    userId: string,
+  ): Promise<RefractiveErrorCheck | null> {
+    return await this.prisma.refractiveErrorCheck.findUnique({
+      where: { userId },
+    });
   }
 }
