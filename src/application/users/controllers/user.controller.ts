@@ -17,10 +17,9 @@ import {
 } from '@nestjs/swagger';
 import { UpdateUserUseCase } from '../use-cases/update-user-profile-use-case';
 import { UpdateUserDto } from '../dtos/update-user.dto';
-import { response } from 'src/application/auth/interface/response-interface';
 import { JwtAuthGuard } from 'src/domain/auth/guards';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CurrentUser } from 'src/common';
+import { CurrentUser, response } from 'src/common';
 import { User } from '@prisma/client';
 
 @ApiTags('users')
@@ -81,7 +80,7 @@ export class UsersController {
     return {
       status: true,
       message: 'User profile successfully updated',
-      ...response,
+      data: { ...response },
     };
   }
 }

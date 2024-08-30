@@ -1,4 +1,4 @@
-import { RefractiveErrorCheck } from 'src/domain/refractiveErrorCheck/entities';
+import { RefractiveErrorCheck } from 'src/domain/Questionnaire/entities';
 import { RefractiveErrorCheckResponseDto } from '../dtos';
 
 export class RefractiveErrorCheckMapper {

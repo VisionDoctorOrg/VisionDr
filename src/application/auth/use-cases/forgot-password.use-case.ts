@@ -4,7 +4,8 @@ import { randomBytes } from 'crypto';
 import { MailService } from 'src/common/mail/mail.service';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ConfigService } from '@nestjs/config';
-import { response } from '../interface/response-interface';
+import { response } from 'src/common';
+import { User } from 'src/domain/users/entities/user.entity';
 
 @Injectable()
 export class ForgotPasswordUseCase {
@@ -14,7 +15,7 @@ export class ForgotPasswordUseCase {
     private readonly mailService: MailService,
   ) {}
 
-  async execute(forgotPasswordDto: ForgotPasswordDto): Promise<response> {
+  async execute(forgotPasswordDto: ForgotPasswordDto): Promise<User> {
     const user = await this.authService.findByEmail(forgotPasswordDto.email);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

@@ -16,5 +16,6 @@ export class User extends BaseUser {
   hobbies?: string;
   imageId?: string;
   image?: Image;
+  accessToken?: string;
   refractiveErrorCheck?: RefractiveErrorCheck;
 }

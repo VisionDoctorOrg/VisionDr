@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { RefractiveErrorCheckRepository } from '../interfaces';
-import { RefractiveErrorCheckResponseDto } from 'src/application/refractiveErrorCheck';
+import { RefractiveErrorCheckResponseDto } from 'src/application/Questionnaire';
 import { UsersService } from 'src/domain/users/services/users.service';
 import { RefractiveErrorCheck } from '../entities';
 

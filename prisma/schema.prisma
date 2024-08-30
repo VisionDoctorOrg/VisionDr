@@ -40,6 +40,7 @@ model User {
   image   Image?  @relation(fields: [imageId], references: [id])
 
   refractiveErrorCheck RefractiveErrorCheck?
+  glaucoma             Glaucoma?
 }
 
 model RefractiveErrorCheck {
@@ -51,6 +52,19 @@ model RefractiveErrorCheck {
   additionalInformation   Json
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
+
+  userId String? @unique @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+model Glaucoma {
+  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+  eyeHealthHistory       Json
+  visionSymptoms         Json
+  lifestyleVisualDemands Json
+  additionalInformation  Json
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   userId String? @unique @db.ObjectId
   user   User?   @relation(fields: [userId], references: [id])

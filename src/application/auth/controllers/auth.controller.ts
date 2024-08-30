@@ -14,12 +14,12 @@ import { SignupUseCase } from '../use-cases/signup.use-case';
 import { LoginUseCase } from '../use-cases/login.use-case';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GoogleOauthGuard, LocalAuthGuard } from 'src/domain/auth/guards';
-import { LoginResponse, response } from '../interface/response-interface';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ForgotPasswordUseCase } from '../use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from '../use-cases/reset-password.use-case';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { response } from 'src/common';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -43,7 +43,7 @@ export class AuthController {
     return {
       status: true,
       message: 'Signup successfully',
-      ...user,
+      data: { ...user },
     };
   }
 
@@ -58,11 +58,14 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized.',
   })
-  async login(
-    @Body() loginDto: LoginDto,
-    @Request() req,
-  ): Promise<LoginResponse> {
-    return this.loginUseCase.execute(req.user);
+  async login(@Body() loginDto: LoginDto, @Request() req): Promise<response> {
+    const response = await this.loginUseCase.execute(req.user);
+
+    return {
+      status: true,
+      message: 'Login successfully',
+      data: { ...response },
+    };
   }
 
   @Post('forgot-password')
@@ -79,6 +82,7 @@ export class AuthController {
     return {
       status: true,
       message: 'Email successfully sent',
+      data: {},
     };
   }
 

@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/common';
-import { RefractiveErrorCheckRepository } from 'src/domain/refractiveErrorCheck';
-import { RefractiveErrorCheck } from 'src/domain/refractiveErrorCheck/entities';
+import { RefractiveErrorCheckRepository } from 'src/domain/Questionnaire';
+import { RefractiveErrorCheck } from 'src/domain/Questionnaire/entities';
 
 @Injectable()
 export class refractiveErrorCheckRepository

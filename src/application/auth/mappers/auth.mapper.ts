@@ -1,7 +1,6 @@
 import { User } from 'src/domain/users/entities/user.entity';
 import { SignupDto } from '../dtos/signup.dto';
 import { Type } from 'src/common';
-import { LoginResponse } from '../interface/response-interface';
 
 export class AuthMapper {
   static toDomain(signupDto: SignupDto): SignupDto {
@@ -37,7 +36,7 @@ export class AuthMapper {
     };
   }
 
-  static toLoginDto(user: User, accessToken: string): LoginResponse {
+  static toLoginDto(user: User, accessToken: string): User {
     return {
       id: user.id,
       fullName: user.fullName,

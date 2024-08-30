@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RefractiveErrorCheckUseCase } from '../use-cases';
 import { RefractiveErrorCheckMapper } from '../mappers';
 import { RefractiveErrorCheckResponseDto } from '../dtos';
-import { CurrentUser } from 'src/common';
+import { CurrentUser, response } from 'src/common';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/domain/auth/guards';
 
@@ -24,11 +24,19 @@ export class RefractiveErrorCheckController {
   public async RefractiveErrorCheck(
     @Body() refractiveErrorCheckResponseDto: RefractiveErrorCheckResponseDto,
     @CurrentUser() user: User,
-  ): Promise<any> {
+  ): Promise<response> {
     const refractiveErrorCheck = await this.refractiveErrorCheckUseCase.execute(
       user.id,
       refractiveErrorCheckResponseDto,
     );
-    return RefractiveErrorCheckMapper.toDto(refractiveErrorCheck);
+    const response = RefractiveErrorCheckMapper.toDto(refractiveErrorCheck);
+
+    return {
+      status: true,
+      message: 'Response successfully recorded',
+      data: {
+        ...response,
+      },
+    };
   }
 }
