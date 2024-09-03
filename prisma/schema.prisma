@@ -39,17 +39,19 @@ model User {
   imageId String? @db.ObjectId
   image   Image?  @relation(fields: [imageId], references: [id])
 
-  refractiveErrorCheck RefractiveErrorCheck?
-  glaucoma             Glaucoma?
+  refractiveErrorCheck  RefractiveErrorCheck?
+  additionalInformation AdditionalInformation?
+  glaucoma              Glaucoma?
+  caseFile              CaseFile?
 }
 
 model RefractiveErrorCheck {
   id                      String   @id @default(auto()) @map("_id") @db.ObjectId
-  medicalHistory          Json
-  visionSymptoms          Json
-  currentVisionCorrection Json
-  lifestyleVisualDemands  Json
-  additionalInformation   Json
+  medicalHistory          Json?
+  visionSymptoms          Json?
+  currentVisionCorrection Json?
+  lifestyleVisualDemands  Json?
+  additionalInformation   Json?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
@@ -59,12 +61,45 @@ model RefractiveErrorCheck {
 
 model Glaucoma {
   id                     String   @id @default(auto()) @map("_id") @db.ObjectId
-  eyeHealthHistory       Json
-  visionSymptoms         Json
-  lifestyleVisualDemands Json
-  additionalInformation  Json
+  eyeHealthHistory       Json?
+  visionSymptoms         Json?
+  lifestyleVisualDemands Json?
+  additionalInformation  Json?
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+
+  userId String? @unique @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+model CaseFile {
+  id                   String @id @default(auto()) @map("_id") @db.ObjectId
+  mainComplaint        Json?
+  eyeHistory           Json?
+  medicalHistory       Json?
+  lastEyeExamination   Json?
+  familyVisualHistory  Json?
+  familyMedicalHistory Json?
+  allergies            Json?
+  currentDrugUse       Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String? @unique @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+
+  fileId String? @db.ObjectId
+  file   Image?  @relation(fields: [fileId], references: [id])
+}
+
+model AdditionalInformation {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  currentVision String?
+  lifeStyle     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   userId String? @unique @db.ObjectId
   user   User?   @relation(fields: [userId], references: [id])
@@ -92,6 +127,7 @@ model Image {
   createdAt DateTime @default(now())
 
   users User[]
+  files CaseFile[]
 }
 
 model Waitlist {

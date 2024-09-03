@@ -1,2 +1,2 @@
 export * from './refractiveErrorCheck.service';
-export * from './glaucomaservice';
+export * from './glaucoma.service';

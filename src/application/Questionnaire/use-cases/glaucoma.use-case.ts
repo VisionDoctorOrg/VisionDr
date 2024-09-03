@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GlaucomaResponseDto } from '../dtos';
 import { GlaucomaMapper } from '../mappers';
 //import { GlaucomaService } from 'src/domain/Questionnaire';
-import { GlaucomaService } from 'src/domain/Questionnaire/services/glaucomaservice';
+import { GlaucomaService } from 'src/domain/Questionnaire/services/glaucoma.service';
 
 @Injectable()
 export class GlaucomaUseCase {
