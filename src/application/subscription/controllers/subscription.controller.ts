@@ -6,6 +6,7 @@ import {
   UseGuards,
   Req,
   Res,
+  Param,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -37,6 +38,15 @@ export class SubscriptionController {
       user.id,
       createSubscriptionDto,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('cancel/:subscriptionId')
+  public async cancelSubscription(
+    @CurrentUser() user: User,
+    @Param('subscriptionId') subscriptionId: string,
+  ) {
+    return this.subscriptionUseCase.cancelSubscription(subscriptionId);
   }
 
   @Post('webhook')
