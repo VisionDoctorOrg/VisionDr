@@ -7,7 +7,7 @@ import { User } from 'src/domain/users/entities/user.entity';
 export class LoginUseCase {
   constructor(private readonly authService: AuthService) {}
 
-  async execute(data: User): Promise<any> {
+  async execute(data: User): Promise<User> {
     const { user, accessToken } = await this.authService.login(data.email);
     const loginResponse = AuthMapper.toLoginDto(user, accessToken);
     return loginResponse;
