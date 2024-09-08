@@ -1,8 +1,8 @@
 import { Controller, Post, Body, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CaseFileUseCase, GlaucomaUseCase } from '../use-cases';
-import { CaseFileMapper, GlaucomaMapper } from '../mappers';
-import { CaseFileResponseDto, GlaucomaResponseDto } from '../dtos';
+import { CaseFileUseCase } from '../use-cases';
+import { CaseFileMapper } from '../mappers';
+import { CaseFileResponseDto } from '../dtos';
 import { CurrentUser, response } from 'src/common';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/domain/auth/guards';
@@ -19,7 +19,7 @@ export class CaseFileController {
     status: HttpStatus.CREATED,
     description: 'Successfully recorded.',
   })
-  public async Glaucoma(
+  public async CaseFile(
     @Body() caseFileResponseDto: CaseFileResponseDto,
     @CurrentUser() user: User,
   ): Promise<response> {

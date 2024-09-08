@@ -8,6 +8,7 @@ import { WaitlistModule } from './domain/waitlist/waitlist.module';
 import { ContactUsModule } from './domain/contactUs/contactUs.module';
 import { UsersModule } from './domain/users/users.module';
 import { QuestionnaireModule } from './domain/Questionnaire';
+import { SubscriptionModule } from './domain/subscription/subscription.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { QuestionnaireModule } from './domain/Questionnaire';
     WaitlistModule,
     ContactUsModule,
     QuestionnaireModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [
