@@ -18,7 +18,7 @@ export class CreateSubscriptionDto {
   })
   @IsNotEmpty()
   @IsString()
-  amount: string;
+  amount: number;
 }
 
 export interface InitializeSubscription {

@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AuthProvider } from '@prisma/client';
+import { AuthProvider, Status } from '@prisma/client';
 import { UpdateUserDto } from 'src/application/users/dtos/update-user.dto';
 import { CloudinaryService, PrismaService } from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
@@ -140,6 +140,20 @@ export class UsersService {
   async findByResetToken(token: string): Promise<User | null> {
     try {
       return this.userRepository.findByResetToken(token);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateUserSubscriptionStatus(
+    id: string,
+    status: Status,
+  ): Promise<void> {
+    try {
+      await this.prismaService.user.update({
+        where: { id },
+        data: { subscriptionActive: status },
+      });
     } catch (error) {
       throw error;
     }

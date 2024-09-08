@@ -1,5 +1,14 @@
-import { Controller, Post, Body, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpStatus,
+  UseGuards,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { SubscriptionUseCase } from '../use-cases';
 import { SubscriptionMapper } from '../mappers';
 import { CreateSubscriptionDto, InitializeSubscription } from '../dtos';
@@ -28,5 +37,12 @@ export class SubscriptionController {
       user.id,
       createSubscriptionDto,
     );
+  }
+
+  @Post('webhook')
+  async webhook(@Req() req: Request, @Res() res: Response) {
+    const event = req.body;
+    res.sendStatus(200);
+    await this.subscriptionUseCase.handleWebhook(event, res);
   }
 }

@@ -1,6 +1,6 @@
 export class Subscription {
   id?: string;
-  amount?: string;
+  amount?: number;
   plan?: string;
   createdAt?: Date;
   updatedAt?: Date;
