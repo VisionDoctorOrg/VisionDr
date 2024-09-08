@@ -3,7 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSubscriptionDto {
   @ApiProperty({
-    example: 'PLN_fti42oat316rpp5',
+    example:
+      'TEST PLAN: PLN_fti42oat316rpp5, STARTER PLAN: PLN_0ektrhm9lf8ap6z',
     description: 'Message Body',
     required: true,
   })
