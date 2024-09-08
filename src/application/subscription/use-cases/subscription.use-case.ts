@@ -1,24 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { MailService } from 'src/common/mail/mail.service';
-import { Subscription } from 'src/domain/subscription/entities';
-import { CreateSubscriptionDto } from '../dtos';
+import { CreateSubscriptionDto, InitializeSubscription } from '../dtos';
 import { SubscriptionService } from 'src/domain/subscription/services';
-import { SubscriptionMapper } from '../mappers';
 
 @Injectable()
 export class SubscriptionUseCase {
-  constructor(
-    private readonly subscriptionService: SubscriptionService,
-    private readonly mailService: MailService,
-  ) {}
+  constructor(private readonly subscriptionService: SubscriptionService) {}
 
-  async execute(
+  public async InitializeSubscription(
+    userId: string,
     createSubscriptionDto: CreateSubscriptionDto,
-  ): Promise<Subscription> {
+  ): Promise<InitializeSubscription> {
     const subscription = await this.subscriptionService.initializeSubscription(
+      userId,
       createSubscriptionDto,
     );
 
-    return SubscriptionMapper.toDto(subscription);
+    return subscription;
   }
 }
