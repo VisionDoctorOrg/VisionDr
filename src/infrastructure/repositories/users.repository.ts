@@ -78,7 +78,11 @@ export class userRepository implements UserRepository {
             phoneNumber,
             imageId,
           },
-          include: { image: true },
+          include: {
+            image: true,
+            subscriptions: true,
+            refractiveErrorCheck: true,
+          },
         });
       }
     } catch (error) {
@@ -89,14 +93,14 @@ export class userRepository implements UserRepository {
   async findById(id: string): Promise<User | null> {
     return await this.prisma.user.findUnique({
       where: { id },
-      include: { image: true, subscriptions: true },
+      include: { image: true, subscriptions: true, refractiveErrorCheck: true },
     });
   }
 
   async findByEmail(email: string): Promise<User | null> {
     return await this.prisma.user.findUnique({
       where: { email },
-      include: { image: true, subscriptions: true },
+      include: { image: true, subscriptions: true, refractiveErrorCheck: true },
     });
   }
 

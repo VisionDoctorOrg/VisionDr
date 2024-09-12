@@ -10,6 +10,7 @@ export class LoginUseCase {
   async execute(data: User): Promise<User> {
     const { user, accessToken } = await this.authService.login(data.email);
     const loginResponse = AuthMapper.toLoginDto(user, accessToken);
+
     return loginResponse;
   }
 }

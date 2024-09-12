@@ -21,7 +21,8 @@ export class AuthMapper {
         fullName: user.fullName,
         email: user.email,
         authProvider: user.authProvider,
-        subscription: user.subscription,
+        subscriptions: user.subscriptions,
+        refractiveErrorCheck: user.refractiveErrorCheck,
         image: user.image,
         createdAt: user.createdAt,
       };
@@ -34,7 +35,7 @@ export class AuthMapper {
       email: user.email,
       createdAt: user.createdAt,
       image: user.image,
-      subscription: user.subscription,
+      subscriptions: user.subscriptions,
       refractiveErrorCheck: user.refractiveErrorCheck,
     };
   }
@@ -47,7 +48,7 @@ export class AuthMapper {
       createdAt: user.createdAt,
       accessToken,
       image: user.image,
-      subscription: user.subscription,
+      subscriptions: user.subscriptions,
       refractiveErrorCheck: user.refractiveErrorCheck,
     };
   }

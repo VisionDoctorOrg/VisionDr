@@ -5,6 +5,7 @@ import {
   Subscription,
 } from '@prisma/client';
 import { BaseUser } from 'src/common';
+//import { Subscription } from 'src/domain/subscription/entities';
 
 export class User extends BaseUser {
   googleId?: string;
@@ -21,7 +22,7 @@ export class User extends BaseUser {
   hobbies?: string;
   imageId?: string;
   image?: Image;
-  subscription?: Subscription;
+  subscriptions?: Subscription[];
   accessToken?: string;
   refractiveErrorCheck?: RefractiveErrorCheck;
 }
