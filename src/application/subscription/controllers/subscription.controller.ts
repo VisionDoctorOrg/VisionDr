@@ -10,7 +10,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { SubscriptionUseCase } from '../use-cases';
 import { SubscriptionMapper } from '../mappers';
 import { CreateSubscriptionDto, InitializeSubscription } from '../dtos';
@@ -18,18 +18,22 @@ import { Subscription } from 'src/domain/subscription/entities';
 import { CurrentUser } from 'src/common';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/domain/auth/guards';
+import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('subscription')
 @Controller('subscription')
 export class SubscriptionController {
+  private readonly logger = new Logger(SubscriptionController.name);
+
   constructor(
     private readonly subscriptionUseCase: SubscriptionUseCase,
-    private readonly logger = new Logger(SubscriptionController.name),
+    private readonly configService: ConfigService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('initialize')
-  @ApiOperation({ summary: 'Iniatialize subscription' })
+  @ApiOperation({ summary: 'Initialize subscription' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Successfully generated link',
@@ -47,17 +51,28 @@ export class SubscriptionController {
   @UseGuards(JwtAuthGuard)
   @Post('cancel/:subscriptionId')
   public async cancelSubscription(
-    @CurrentUser() user: User,
+    //@CurrentUser() user: User,
     @Param('subscriptionId') subscriptionId: string,
   ) {
-    return this.subscriptionUseCase.cancelSubscription(subscriptionId);
+    return await this.subscriptionUseCase.cancelSubscription(subscriptionId);
   }
 
   @Post('webhook')
   async webhook(@Req() req: Request, @Res() res: Response) {
     this.logger.verbose('Subscription webhook received', req.body);
+
+    const secret = this.configService.get<string>('JWT_SECRET');
+    const hash = crypto
+      .createHmac('sha512', secret)
+      .update(JSON.stringify(req.body))
+      .digest('hex');
+
+    console.log(hash);
+
     const event = req.body;
+
     await this.subscriptionUseCase.handleWebhook(event, res);
-    res.sendStatus(200);
+
+    return res.sendStatus(200);
   }
 }
