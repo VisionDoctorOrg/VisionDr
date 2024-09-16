@@ -1,5 +1,5 @@
 import { Controller, Post, Body, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RefractiveErrorCheckUseCase } from '../use-cases';
 import { RefractiveErrorCheckMapper } from '../mappers';
 import { RefractiveErrorCheckResponseDto } from '../dtos';
@@ -21,6 +21,7 @@ export class RefractiveErrorCheckController {
     status: HttpStatus.CREATED,
     description: 'Successfully updated.',
   })
+  @ApiBody({ type: RefractiveErrorCheckResponseDto })
   public async RefractiveErrorCheck(
     @Body() refractiveErrorCheckResponseDto: RefractiveErrorCheckResponseDto,
     @CurrentUser() user: User,

@@ -8,7 +8,6 @@ import {
 } from '@nestjs/swagger';
 
 export const setupSwagger = (app: INestApplication) => {
-  
   const configService = app.get(ConfigService);
   //const swaggerConfig = configService.get('swagger');
 
@@ -18,9 +17,10 @@ export const setupSwagger = (app: INestApplication) => {
     docVersion: configService.get<string>('SWAGGER_DOC_VERSION'),
     path: configService.get<string>('SWAGGER_PATH'),
     siteTitle: configService.get<string>('SWAGGER_SITE_TITLE'),
-    defaultModelsExpandDepth: configService.get<number>('SWAGGER_MODELS_EXPAND_DEPTH'),
+    defaultModelsExpandDepth: configService.get<number>(
+      'SWAGGER_MODELS_EXPAND_DEPTH',
+    ),
   };
-
 
   const config = new DocumentBuilder()
     .setTitle(swaggerConfig?.docTitle)
@@ -32,8 +32,6 @@ export const setupSwagger = (app: INestApplication) => {
   const documentOptions: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   };
-
-  console.log(documentOptions)
 
   const document = SwaggerModule.createDocument(app, config, documentOptions);
 

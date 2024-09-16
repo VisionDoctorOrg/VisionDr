@@ -7,6 +7,7 @@ import {
   Req,
   Res,
   Param,
+  Logger,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -21,7 +22,10 @@ import { JwtAuthGuard } from 'src/domain/auth/guards';
 @ApiTags('subscription')
 @Controller('subscription')
 export class SubscriptionController {
-  constructor(private readonly subscriptionUseCase: SubscriptionUseCase) {}
+  constructor(
+    private readonly subscriptionUseCase: SubscriptionUseCase,
+    private readonly logger = new Logger(SubscriptionController.name),
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('initialize')
@@ -51,6 +55,7 @@ export class SubscriptionController {
 
   @Post('webhook')
   async webhook(@Req() req: Request, @Res() res: Response) {
+    this.logger.verbose('Subscription webhook received', req.body);
     const event = req.body;
     res.sendStatus(200);
     await this.subscriptionUseCase.handleWebhook(event, res);

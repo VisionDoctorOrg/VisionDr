@@ -113,8 +113,7 @@ export class CaseFileResponseDto {
   @Type(() => ResponsesDto)
   @ApiProperty({
     type: ResponsesDto,
-    description:
-      'Object containing user responses grouped by each step of the casefile questionnaire',
+    description: 'Object containing user responses',
   })
   responses: ResponsesDto;
 }

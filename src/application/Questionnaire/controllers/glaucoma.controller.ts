@@ -1,5 +1,5 @@
 import { Controller, Post, Body, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GlaucomaUseCase } from '../use-cases';
 import { GlaucomaMapper } from '../mappers';
 import { GlaucomaResponseDto } from '../dtos';
@@ -14,11 +14,12 @@ export class GlaucomaController {
 
   @Post('questionnaire')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'refractiveErrorCheck' })
+  @ApiOperation({ summary: 'Glaucoma' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Successfully updated.',
   })
+  @ApiBody({ type: GlaucomaResponseDto })
   public async Glaucoma(
     @Body() glaucomaResponseDto: GlaucomaResponseDto,
     @CurrentUser() user: User,

@@ -1,5 +1,5 @@
 import { Controller, Post, Body, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CaseFileUseCase } from '../use-cases';
 import { CaseFileMapper } from '../mappers';
 import { CaseFileResponseDto } from '../dtos';
@@ -17,8 +17,9 @@ export class CaseFileController {
   @ApiOperation({ summary: 'CaseFile' })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'Successfully recorded.',
+    description: 'Successfully recorded Casefile.',
   })
+  @ApiBody({ type: CaseFileResponseDto })
   public async CaseFile(
     @Body() caseFileResponseDto: CaseFileResponseDto,
     @CurrentUser() user: User,
