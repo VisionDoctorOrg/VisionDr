@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AuthProvider, Status } from '@prisma/client';
+import { AdditionalInformation, AuthProvider, Status } from '@prisma/client';
+import { UpdateAdditionalInfoDto } from 'src/application/users/dtos/additional-info.dto';
 import { UpdateUserDto } from 'src/application/users/dtos/update-user.dto';
 import { CloudinaryService, PrismaService } from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
@@ -155,6 +156,45 @@ export class UsersService {
         data: { subscriptionActive: status },
       });
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async createAdditionalInfo(
+    userId: string,
+    updateAdditionalInfoDto: UpdateAdditionalInfoDto,
+  ): Promise<AdditionalInformation> {
+    return this.userRepository.createAdditionalInfo(
+      userId,
+      updateAdditionalInfoDto,
+    );
+  }
+
+  async getAdditionalInfo(
+    userId: string,
+  ): Promise<AdditionalInformation | null> {
+    try {
+      const info = await this.userRepository.getAdditionalInfo(userId);
+      if (info) {
+        return info;
+      }
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAdditionalInformation(
+    id: string,
+    UpdateAdditionalInfoDto: UpdateAdditionalInfoDto,
+  ): Promise<AdditionalInformation> {
+    try {
+      return await this.userRepository.updateAdditionalInformation(
+        id,
+        UpdateAdditionalInfoDto,
+      );
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }

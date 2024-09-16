@@ -1,8 +1,9 @@
-import { AuthProvider, Prisma } from '@prisma/client';
+import { AdditionalInformation, AuthProvider, Prisma } from '@prisma/client';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
 import { UserRepository } from 'src/domain/users/interfaces/user-repository.interface';
+import { UpdateAdditionalInfoDto } from 'src/application/users/dtos/additional-info.dto';
 
 @Injectable()
 export class userRepository implements UserRepository {
@@ -85,6 +86,58 @@ export class userRepository implements UserRepository {
           },
         });
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createAdditionalInfo(
+    userId: string,
+    dto: UpdateAdditionalInfoDto,
+  ): Promise<AdditionalInformation> {
+    try {
+      const additionalInfo = await this.prisma.additionalInformation.create({
+        data: {
+          currentVision: dto.currentVision,
+          lifeStyle: dto.lifeStyle,
+          userId,
+        },
+      });
+
+      return additionalInfo;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAdditionalInfo(
+    userId: string,
+  ): Promise<AdditionalInformation | null> {
+    try {
+      return await this.prisma.additionalInformation.findUnique({
+        where: { userId },
+        include: { user: true },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAdditionalInformation(
+    id: string,
+    info: UpdateAdditionalInfoDto,
+  ): Promise<AdditionalInformation> {
+    try {
+      return await this.prisma.additionalInformation.update({
+        where: { id },
+        data: {
+          currentVision: info.currentVision,
+          lifeStyle: info?.lifeStyle,
+        },
+        include: {
+          user: true,
+        },
+      });
     } catch (error) {
       throw error;
     }

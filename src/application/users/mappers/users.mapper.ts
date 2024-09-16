@@ -1,5 +1,6 @@
 import { User } from 'src/domain/users/entities/user.entity';
 import { UpdateUserDto } from '../dtos/update-user.dto';
+import { AdditionalInformation } from '@prisma/client';
 
 export class UsersMapper {
   static toDomain(updateUserDto: UpdateUserDto): UpdateUserDto {
@@ -26,6 +27,17 @@ export class UsersMapper {
       authProvider: user.authProvider,
       createdAt: user.createdAt,
       image: user.image,
+    };
+  }
+
+  static additionalInfoDto(info: AdditionalInformation): AdditionalInformation {
+    return {
+      id: info.id,
+      currentVision: info.currentVision,
+      lifeStyle: info.lifeStyle,
+      createdAt: info.createdAt,
+      updatedAt: info.updatedAt,
+      userId: info.userId,
     };
   }
 }
