@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
           if (request?.headers?.authorization) {
             const authHeader = request.headers.authorization;
-            console.log('Authorization header:', authHeader);
+
             if (authHeader.startsWith('Bearer ')) {
               return authHeader.split(' ')[1];
             }

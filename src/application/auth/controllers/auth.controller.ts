@@ -13,13 +13,18 @@ import { LoginDto } from '../dtos/login.dto';
 import { SignupUseCase } from '../use-cases/signup.use-case';
 import { LoginUseCase } from '../use-cases/login.use-case';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { GoogleOauthGuard, LocalAuthGuard } from 'src/domain/auth/guards';
+import {
+  GoogleOauthGuard,
+  JwtAuthGuard,
+  LocalAuthGuard,
+} from 'src/domain/auth/guards';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ForgotPasswordUseCase } from '../use-cases/forgot-password.use-case';
 import { ResetPasswordUseCase } from '../use-cases/reset-password.use-case';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { response } from 'src/common';
+import { CurrentUser, response } from 'src/common';
+import { User } from 'src/domain/users/entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -65,6 +70,25 @@ export class AuthController {
       status: true,
       message: 'Login successfully',
       data: { ...response },
+    };
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get current authenticated user' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Current user details fetched successfully.',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized.',
+  })
+  async getCurrentUser(@CurrentUser() user: User): Promise<response> {
+    return {
+      status: true,
+      message: 'Current user fetched successfully',
+      data: user,
     };
   }
 
