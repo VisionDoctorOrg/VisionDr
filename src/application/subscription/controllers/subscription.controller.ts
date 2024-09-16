@@ -67,7 +67,12 @@ export class SubscriptionController {
       .update(JSON.stringify(req.body))
       .digest('hex');
 
-    console.log(hash);
+    this.logger.debug(hash == req.headers['x-paystack-signature']);
+    if (hash == req.headers['x-paystack-signature']) {
+      console.log(hash);
+      const event = req.body;
+      this.logger.verbose('Subscription hash data:', event);
+    }
 
     const event = req.body;
 
