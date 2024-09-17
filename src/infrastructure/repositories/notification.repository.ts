@@ -31,8 +31,6 @@ export class notificationRepository implements NotificationRepository {
         });
       }
 
-      console.log(preference);
-
       return await this.repository.notificationPreference.update({
         where: { userId },
         data: {
