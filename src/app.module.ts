@@ -9,6 +9,7 @@ import { ContactUsModule } from './domain/contactUs/contactUs.module';
 import { UsersModule } from './domain/users/users.module';
 import { QuestionnaireModule } from './domain/Questionnaire';
 import { SubscriptionModule } from './domain/subscription/subscription.module';
+import { NotificationModule } from './domain/notification/notification.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SubscriptionModule } from './domain/subscription/subscription.module';
     ContactUsModule,
     QuestionnaireModule,
     SubscriptionModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

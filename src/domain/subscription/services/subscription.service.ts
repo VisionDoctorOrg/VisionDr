@@ -17,21 +17,6 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/domain/users/services/users.service';
 import { firstValueFrom } from 'rxjs';
 
-// @Injectable()
-// export class SubscriptionService {
-
-//   public async initializeSubscription(
-//     CreateSubscriptionDto: CreateSubscriptionDto,
-//   ): Promise<Subscription> {
-//     try {
-//       return await this.subscriptionRepository.create(CreateSubscriptionDto);
-//     } catch (error) {
-//       this.logger.error(error);
-//       throw error;
-//     }
-//   }
-// }
-
 export class SubscriptionService {
   private readonly logger = new Logger(SubscriptionService.name);
   private readonly baseUrl: string;
