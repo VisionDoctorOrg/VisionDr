@@ -121,16 +121,28 @@ model AdditionalInformation {
 }
 
 model Subscription {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  subscriptionCode String   @unique
-  userId           String   @db.ObjectId
-  plan             String
-  status           String
-  email_token      String
-  amount           Int
-  nextPaymentDate  DateTime
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  subscriptionCode   String    @unique
+  userId             String    @db.ObjectId
+  plan               String?
+  status             String?
+  email_token        String?
+  amount             Int?
+  nextPaymentDate    DateTime?
+  authorization_code String?
+  last4              String?
+  exp_month          String?
+  exp_year           String?
+  channel            String?
+  card_type          String?
+  bank               String?
+  country_code       String?
+  brand              String?
+  reusable           Boolean?
+  signature          String?
+  account_name       String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
