@@ -92,4 +92,51 @@ export class NotificationService {
   ): Promise<MedicationReminder[]> {
     return this.notificationRepository.getRemindersForToday(userId, date);
   }
+
+  public async updateReminderTimeStatus(
+    userId: string,
+    reminderTimeId: string,
+    completed: boolean,
+  ): Promise<any> {
+    try {
+      const existingReminderTime =
+        await this.notificationRepository.findReminderTimeById(
+          reminderTimeId,
+          userId,
+        );
+      if (!existingReminderTime) {
+        throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
+      }
+      const updatedReminderTime =
+        await this.notificationRepository.updateReminderTime(
+          reminderTimeId,
+          completed,
+        );
+
+      const reminder =
+        await this.notificationRepository.getMedicationByReminderTimeId(
+          reminderTimeId,
+        );
+
+      console.log(reminder);
+      // Recalculate the number of completed reminders
+      const completedReminders = reminder.reminderTimes.filter(
+        (rt) => rt.completed,
+      ).length;
+
+      // Calculate the new progress
+      const progress =
+        (completedReminders / reminder.totalRemindersForTheDay) * 100;
+
+      await this.notificationRepository.updateMedicationReminder(
+        reminder.id,
+        progress,
+      );
+
+      return updatedReminderTime;
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
 }

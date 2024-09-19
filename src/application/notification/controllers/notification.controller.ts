@@ -10,6 +10,7 @@ import {
   Param,
   Get,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NotificationPreferenceDto } from '../dtos';
@@ -81,29 +82,53 @@ export class NotificationController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('medication-reminders')
-  @ApiOperation({ summary: 'Get all medication reminders' })
-  @ApiResponse({
-    status: 200,
-    description: 'Retrieved all medication reminders successfully.',
-  })
-  async getAllReminders(@CurrentUser() user: User) {
-    return this.notificationUseCase.getAllMedicationReminders(user.id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('medication-reminders')
+  // @ApiOperation({ summary: 'Get all medication reminders' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Retrieved all medication reminders successfully.',
+  // })
+  // async getAllReminders(@CurrentUser() user: User) {
+  //   return this.notificationUseCase.getAllMedicationReminders(user.id);
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Get('medication-reminders')
   @ApiOperation({ summary: 'Get all medication reminders for the day' })
   @ApiResponse({
     status: 200,
-    description: 'Retrieved all medication reminders successfully.',
+    description: 'Retrieved all medication reminders successfully',
   })
   async getTodayReminders(
     @CurrentUser() user: User,
     @Query('date') date: string,
   ) {
-    this.logger.debug(date, user.id);
     return this.notificationUseCase.getRemindersForToday(user.id, date);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update-reminder-status')
+  @ApiOperation({ summary: 'Update a medication reminder status' })
+  @ApiResponse({
+    status: 200,
+    description: 'The reminder has been successfully updated.',
+  })
+  async updateReminderTimeStatus(
+    @Query('reminderId') reminderId: string,
+    @Query('completed') completed: boolean,
+    @CurrentUser() user: User,
+  ): Promise<response> {
+    const respnse = await this.notificationUseCase.updateReminderTimeStatus(
+      user.id,
+      reminderId,
+      completed,
+    );
+
+    return {
+      status: true,
+      message: 'Deleted successfully',
+      data: { respnse },
+    };
   }
 }

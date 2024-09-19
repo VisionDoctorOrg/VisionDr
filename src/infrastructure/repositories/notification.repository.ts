@@ -7,6 +7,7 @@ import {
   NotificationPreference,
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
+import { MedicationReminderTime } from '@prisma/client';
 
 @Injectable()
 export class notificationRepository implements NotificationRepository {
@@ -151,7 +152,7 @@ export class notificationRepository implements NotificationRepository {
           },
         },
         include: {
-          reminderTimes: true, // Include the reminder times for each medication
+          reminderTimes: true,
         },
       });
 
@@ -203,5 +204,70 @@ export class notificationRepository implements NotificationRepository {
       completedRemindersForTheDay,
       overallProgress: overallProgress.toFixed(2), // Example: "60.00%"
     };
+  }
+
+  async updateMedicationReminder(
+    reminderId: string,
+    progress: number,
+  ): Promise<MedicationReminder> {
+    try {
+      try {
+        return await this.repository.medicationReminder.update({
+          where: { id: reminderId },
+          data: { progress },
+        });
+      } catch (error) {
+        throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateReminderTime(
+    reminderTimeId: string,
+    completed: boolean,
+  ): Promise<MedicationReminderTime> {
+    try {
+      return await this.repository.medicationReminderTime.update({
+        where: { id: reminderTimeId },
+        data: { completed },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMedicationByReminderTimeId(
+    reminderId: string,
+  ): Promise<MedicationReminder> {
+    try {
+      return this.repository.medicationReminder.findFirst({
+        where: {
+          reminderTimes: {
+            some: {
+              id: reminderId,
+            },
+          },
+        },
+        include: { reminderTimes: true },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findReminderTimeById(
+    reminderTimeId: string,
+  ): Promise<MedicationReminderTime> {
+    try {
+      return this.repository.medicationReminderTime.findUnique({
+        where: {
+          id: reminderTimeId,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }

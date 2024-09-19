@@ -58,4 +58,16 @@ export class NotificationUseCase {
   ): Promise<MedicationReminder[]> {
     return await this.notificationService.getRemindersForToday(userId, date);
   }
+
+  public async updateReminderTimeStatus(
+    userId: string,
+    reminderId: string,
+    completed: boolean,
+  ): Promise<void> {
+    return await this.notificationService.updateReminderTimeStatus(
+      userId,
+      reminderId,
+      completed,
+    );
+  }
 }
