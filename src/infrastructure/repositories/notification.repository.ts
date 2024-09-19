@@ -63,6 +63,7 @@ export class notificationRepository implements NotificationRepository {
           medicationType: medicationReminderDto.medicationType,
           dosage: medicationReminderDto.dosage,
           duration: medicationReminderDto.duration,
+          progress: 0,
           reminderTimes: {
             create: medicationReminderDto.reminderTimes.map((time) => ({
               reminderTime: new Date(time.reminderTime),

@@ -9,10 +9,11 @@ import {
   Delete,
   Param,
   Get,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NotificationPreferenceDto } from '../dtos';
-import { CurrentUser } from 'src/common';
+import { CurrentUser, response } from 'src/common';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/domain/auth/guards';
 import { NotificationUseCase } from '../use-cases';
@@ -61,29 +62,37 @@ export class NotificationController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('medication-reminder/delete/:id')
+  @Delete('medication-reminder/:id')
   @ApiOperation({ summary: 'Delete a medication reminder' })
   @ApiResponse({
     status: 200,
     description: 'The reminder has been successfully deleted.',
   })
-  async deleteReminder(@Param('id') id: string, @CurrentUser() user: User) {
-    return this.notificationUseCase.deleteMedicationReminder(user.id, id);
+  async deleteReminder(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<response> {
+    await this.notificationUseCase.deleteMedicationReminder(user.id, id);
+
+    return {
+      status: true,
+      message: 'Deleted successfully',
+      data: {},
+    };
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Get('medication-reminders')
-  // @ApiOperation({ summary: 'Get all medication reminders' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Retrieved all medication reminders successfully.',
-  // })
-  // async getAllReminders(@CurrentUser() user: User) {
-  //   return this.notificationUseCase.getAllMedicationReminders(user.id);
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('medication-reminders')
+  @ApiOperation({ summary: 'Get all medication reminders' })
+  @ApiResponse({
+    status: 200,
+    description: 'Retrieved all medication reminders successfully.',
+  })
+  async getAllReminders(@CurrentUser() user: User) {
+    return this.notificationUseCase.getAllMedicationReminders(user.id);
+  }
 
   @UseGuards(JwtAuthGuard)
-  @Get('today/:userId/:date')
   @Get('medication-reminders')
   @ApiOperation({ summary: 'Get all medication reminders for the day' })
   @ApiResponse({
@@ -91,9 +100,10 @@ export class NotificationController {
     description: 'Retrieved all medication reminders successfully.',
   })
   async getTodayReminders(
-    @Param('userId') userId: string,
-    @Param('date') date: string,
+    @CurrentUser() user: User,
+    @Query('date') date: string,
   ) {
-    return this.notificationUseCase.getRemindersForToday(userId, date);
+    this.logger.debug(date, user.id);
+    return this.notificationUseCase.getRemindersForToday(user.id, date);
   }
 }

@@ -46,11 +46,11 @@ export class NotificationUseCase {
     );
   }
 
-  // public async getAllMedicationReminders(
-  //   userId: string,
-  // ): Promise<MedicationReminder[]> {
-  //   return await this.notificationService.getAllMedicationReminders(userId);
-  // }
+  public async getAllMedicationReminders(
+    userId: string,
+  ): Promise<MedicationReminder[]> {
+    return await this.notificationService.getAllMedicationReminders(userId);
+  }
 
   public async getRemindersForToday(
     userId: string,

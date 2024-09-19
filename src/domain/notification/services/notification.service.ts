@@ -80,11 +80,11 @@ export class NotificationService {
     return this.notificationRepository.deleteReminder(reminderId);
   }
 
-  // public async getAllMedicationReminders(
-  //   userId: string,
-  // ): Promise<MedicationReminder[]> {
-  //   return this.notificationRepository.getAllReminders(userId);
-  // }
+  public async getAllMedicationReminders(
+    userId: string,
+  ): Promise<MedicationReminder[]> {
+    return this.notificationRepository.getAllReminders(userId);
+  }
 
   public async getRemindersForToday(
     userId: string,
