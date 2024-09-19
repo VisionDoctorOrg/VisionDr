@@ -8,6 +8,7 @@ import { UsersService } from 'src/domain/users/services/users.service';
 import { NotificationPreferenceDto } from 'src/application/notification';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
 import { MedicationReminder } from '../entities';
+import { MedicationReminderTime } from '@prisma/client';
 
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
@@ -97,7 +98,7 @@ export class NotificationService {
     userId: string,
     reminderTimeId: string,
     completed: boolean,
-  ): Promise<any> {
+  ): Promise<MedicationReminderTime> {
     try {
       const existingReminderTime =
         await this.notificationRepository.findReminderTimeById(
@@ -113,6 +114,7 @@ export class NotificationService {
           completed,
         );
 
+      // Get Parent medication
       const reminder =
         await this.notificationRepository.getMedicationByReminderTimeId(
           reminderTimeId,
@@ -120,19 +122,34 @@ export class NotificationService {
 
       console.log(reminder);
       // Recalculate the number of completed reminders
+      // Total number of reminders for the specific reminder time
+      const totalRemindersForReminderTime = reminder.reminderTimes.length;
+
+      // Recalculate the number of completed reminders for this reminder time
       const completedReminders = reminder.reminderTimes.filter(
         (rt) => rt.completed,
       ).length;
 
-      // Calculate the new progress
-      const progress =
-        (completedReminders / reminder.totalRemindersForTheDay) * 100;
+      // Calculate the progress for this reminder time based on completed reminders
 
-      await this.notificationRepository.updateMedicationReminder(
-        reminder.id,
-        progress,
+      const progress = Number(
+        ((completedReminders / totalRemindersForReminderTime) * 100).toFixed(2),
       );
 
+      const updatedReminderTimesPromises = reminder.reminderTimes.map(
+        async (rt) => {
+          console.log(rt);
+          return this.notificationRepository.updateReminderTimeProgress(
+            rt.id,
+            progress,
+          );
+        },
+      );
+
+      // Wait for all updates to complete
+      await Promise.all(updatedReminderTimesPromises);
+
+      // Return the specific reminder time that was updated
       return updatedReminderTime;
     } catch (error) {
       this.logger.error(error);

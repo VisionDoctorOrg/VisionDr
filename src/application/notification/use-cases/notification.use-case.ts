@@ -7,6 +7,7 @@ import {
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from '../dtos/medication-reminder.dto';
 import { NotificationMapper } from '../mappers';
+import { MedicationReminderTime } from '@prisma/client';
 
 @Injectable()
 export class NotificationUseCase {
@@ -63,7 +64,7 @@ export class NotificationUseCase {
     userId: string,
     reminderId: string,
     completed: boolean,
-  ): Promise<void> {
+  ): Promise<MedicationReminderTime> {
     return await this.notificationService.updateReminderTimeStatus(
       userId,
       reminderId,

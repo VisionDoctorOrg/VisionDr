@@ -127,8 +127,8 @@ export class NotificationController {
 
     return {
       status: true,
-      message: 'Deleted successfully',
-      data: { respnse },
+      message: 'Updated successfully',
+      data: { ...respnse, progress: undefined },
     };
   }
 }

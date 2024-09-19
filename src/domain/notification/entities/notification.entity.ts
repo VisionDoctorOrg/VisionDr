@@ -1,4 +1,4 @@
-import { MedicationReminderTime } from '@prisma/client';
+//import { MedicationReminderTime } from '@prisma/client';
 
 export class NotificationPreference {
   id?: string;
@@ -21,8 +21,19 @@ export class MedicationReminder {
   reminderTimes?: MedicationReminderTime[];
   totalRemindersForTheDay?: number;
   completedRemindersForTheDay?: number;
-  overallProgress?: string;
   userId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export class MedicationReminderTime {
+  id?: string;
+  reminderTime?: Date;
+  completed?: boolean;
+  medication?: MedicationReminder;
+  totalRemindersForTheDay?: number;
+  completedRemindersForTheDay?: number;
+  progress?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

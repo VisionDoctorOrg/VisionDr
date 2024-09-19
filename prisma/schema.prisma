@@ -155,7 +155,6 @@ model MedicationReminder {
   medicationType String?
   dosage         String?
   duration       Int?
-  progress       Float?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -168,6 +167,7 @@ model MedicationReminderTime {
   medicationReminderId String   @db.ObjectId
   reminderTime         DateTime
   completed            Boolean  @default(false)
+  progress             Float    @default(0)
 
   medicationReminder MedicationReminder @relation(fields: [medicationReminderId], references: [id], onDelete: Cascade)
 }

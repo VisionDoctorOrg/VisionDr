@@ -14,7 +14,7 @@ export interface NotificationRepository
   getMedicationByReminderTimeId(
     reminderTimeId: string,
   ): Promise<MedicationReminder>;
-  updateMedicationReminder(
+  updateReminderTimeProgress(
     reminderId: string,
     progress: number,
   ): Promise<MedicationReminder>;
