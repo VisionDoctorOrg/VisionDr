@@ -1,4 +1,7 @@
-import { NotificationPreference } from 'src/domain/notification/entities';
+import {
+  MedicationReminder,
+  NotificationPreference,
+} from 'src/domain/notification/entities';
 import { NotificationPreferenceDto } from '../dtos';
 
 export class NotificationMapper {
@@ -14,7 +17,9 @@ export class NotificationMapper {
     };
   }
 
-  static toDto(preference: NotificationPreference): NotificationPreference {
+  static notificationPreference(
+    preference: NotificationPreference,
+  ): NotificationPreference {
     return {
       id: preference.id,
       email: preference.email,
@@ -25,6 +30,19 @@ export class NotificationMapper {
       userId: preference.userId,
       createdAt: preference.createdAt,
       updatedAt: preference.updatedAt,
+    };
+  }
+
+  static medicationReminder(reminder: MedicationReminder): MedicationReminder {
+    return {
+      id: reminder.id,
+      medicationName: reminder.medicationName,
+      medicationType: reminder.medicationType,
+      dosage: reminder.dosage,
+      duration: reminder.duration,
+      userId: reminder.userId,
+      createdAt: reminder.createdAt,
+      updatedAt: reminder.updatedAt,
     };
   }
 }

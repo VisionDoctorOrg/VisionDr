@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { NotificationPreferenceDto } from '../dtos';
 import { NotificationService } from 'src/domain/notification/services';
-import { NotificationPreference } from 'src/domain/notification/entities';
+import {
+  MedicationReminder,
+  NotificationPreference,
+} from 'src/domain/notification/entities';
+import { MedicationReminderDto } from '../dtos/medication-reminder.dto';
+import { NotificationMapper } from '../mappers';
 
 @Injectable()
 export class NotificationUseCase {
@@ -16,6 +21,41 @@ export class NotificationUseCase {
       notificationPreferenceDto,
     );
 
-    return notification;
+    return NotificationMapper.notificationPreference(notification);
+  }
+
+  public async createMedicationReminder(
+    userId: string,
+    medicationReminderDto: MedicationReminderDto,
+  ): Promise<MedicationReminder> {
+    const reminder = await this.notificationService.createMedicationReminder(
+      userId,
+      medicationReminderDto,
+    );
+
+    return NotificationMapper.medicationReminder(reminder);
+  }
+
+  public async deleteMedicationReminder(
+    userId: string,
+    reminderId: string,
+  ): Promise<void> {
+    return await this.notificationService.deleteMedicationReminder(
+      userId,
+      reminderId,
+    );
+  }
+
+  // public async getAllMedicationReminders(
+  //   userId: string,
+  // ): Promise<MedicationReminder[]> {
+  //   return await this.notificationService.getAllMedicationReminders(userId);
+  // }
+
+  public async getRemindersForToday(
+    userId: string,
+    date: string,
+  ): Promise<MedicationReminder[]> {
+    return await this.notificationService.getRemindersForToday(userId, date);
   }
 }

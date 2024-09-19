@@ -34,7 +34,8 @@ model User {
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
 
-  subscriptions Subscription[]
+  subscriptions      Subscription[]
+  medicationReminder MedicationReminder[]
 
   imageId String? @db.ObjectId
   image   Image?  @relation(fields: [imageId], references: [id])
@@ -145,6 +146,30 @@ model Subscription {
   updatedAt          DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MedicationReminder {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  medicationName String?
+  medicationType String?
+  dosage         String?
+  duration       Int?
+  progress       Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user          User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminderTimes MedicationReminderTime[]
+}
+
+model MedicationReminderTime {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  medicationReminderId String   @db.ObjectId
+  reminderTime         DateTime
+  completed            Boolean  @default(false)
+
+  medicationReminder MedicationReminder @relation(fields: [medicationReminderId], references: [id], onDelete: Cascade)
 }
 
 model Image {
