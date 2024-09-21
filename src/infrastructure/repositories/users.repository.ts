@@ -1,9 +1,19 @@
-import { AdditionalInformation, AuthProvider, Prisma } from '@prisma/client';
+import {
+  AdditionalInformation,
+  AuthProvider,
+  BloodPressure,
+  Prisma,
+  VisionLevel,
+} from '@prisma/client';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
 import { UserRepository } from 'src/domain/users/interfaces/user-repository.interface';
 import { UpdateAdditionalInfoDto } from 'src/application/users/dtos/additional-info.dto';
+import {
+  CreateBloodPressureDto,
+  CreateVisionDto,
+} from 'src/application/users/dtos';
 
 @Injectable()
 export class userRepository implements UserRepository {
@@ -178,7 +188,6 @@ export class userRepository implements UserRepository {
     });
   }
 
-  // Find user by Google or LinkedIn ID
   async findByProviderId(
     providerId: string,
     provider: AuthProvider,
@@ -191,5 +200,98 @@ export class userRepository implements UserRepository {
         ],
       },
     });
+  }
+
+  async createBloodPressure(
+    userId: string,
+    dto: CreateBloodPressureDto,
+  ): Promise<BloodPressure> {
+    try {
+      const bloodPressure = await this.prisma.bloodPressure.create({
+        data: {
+          systolic: dto.systolic,
+          diastolic: dto.diastolic,
+          userId,
+        },
+      });
+
+      return bloodPressure;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getBloodPressure(userId: string): Promise<BloodPressure | null> {
+    try {
+      return await this.prisma.bloodPressure.findUnique({
+        where: { userId },
+        include: { user: true },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateBloodPressure(
+    id: string,
+    CreateBloodPressureDto: CreateBloodPressureDto,
+  ): Promise<BloodPressure> {
+    try {
+      return await this.prisma.bloodPressure.update({
+        where: { id },
+        data: {
+          systolic: CreateBloodPressureDto.systolic,
+          diastolic: CreateBloodPressureDto?.diastolic,
+        },
+        include: {
+          user: true,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getVisionLevel(userId: string): Promise<VisionLevel | null> {
+    try {
+      return await this.prisma.visionLevel.findUnique({
+        where: { userId },
+        include: { user: true },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createVisionLevel(
+    userId: string,
+    dto: CreateVisionDto,
+  ): Promise<VisionLevel> {
+    try {
+      const vision = await this.prisma.visionLevel.create({
+        data: {
+          visionLevel: dto.visionLevel,
+          userId,
+        },
+      });
+
+      return vision;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateVisionLevel(
+    id: string,
+    updateVisionLevelDto: CreateVisionDto,
+  ): Promise<VisionLevel> {
+    try {
+      return this.prisma.visionLevel.update({
+        where: { id },
+        data: { visionLevel: updateVisionLevelDto.visionLevel },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 }

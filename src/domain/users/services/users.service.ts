@@ -1,5 +1,15 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { AdditionalInformation, AuthProvider, Status } from '@prisma/client';
+import {
+  AdditionalInformation,
+  AuthProvider,
+  BloodPressure,
+  Status,
+  VisionLevel,
+} from '@prisma/client';
+import {
+  CreateBloodPressureDto,
+  CreateVisionDto,
+} from 'src/application/users/dtos';
 import { UpdateAdditionalInfoDto } from 'src/application/users/dtos/additional-info.dto';
 import { UpdateUserDto } from 'src/application/users/dtos/update-user.dto';
 import { CloudinaryService, PrismaService } from 'src/common';
@@ -211,6 +221,74 @@ export class UsersService {
         id,
         UpdateAdditionalInfoDto,
       );
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async createBloodPressure(
+    userId: string,
+    createBloodPressureDto: CreateBloodPressureDto,
+  ): Promise<BloodPressure> {
+    return this.userRepository.createBloodPressure(
+      userId,
+      createBloodPressureDto,
+    );
+  }
+
+  async getBloodPressure(userId: string): Promise<BloodPressure | null> {
+    try {
+      const info = await this.userRepository.getBloodPressure(userId);
+      if (info) {
+        return info;
+      }
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateBloodPressure(
+    id: string,
+    UpdateBloodPressureDto: CreateBloodPressureDto,
+  ): Promise<BloodPressure> {
+    try {
+      return await this.userRepository.updateBloodPressure(
+        id,
+        UpdateBloodPressureDto,
+      );
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async createVisionLevel(
+    userId: string,
+    CreateVisionDto: CreateVisionDto,
+  ): Promise<VisionLevel> {
+    return this.userRepository.createVisionLevel(userId, CreateVisionDto);
+  }
+
+  async getVisionLevel(userId: string): Promise<VisionLevel | null> {
+    try {
+      const info = await this.userRepository.getVisionLevel(userId);
+      if (info) {
+        return info;
+      }
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateVisionLevel(
+    id: string,
+    UpdateVisionDto: CreateVisionDto,
+  ): Promise<VisionLevel> {
+    try {
+      return await this.userRepository.updateVisionLevel(id, UpdateVisionDto);
     } catch (error) {
       console.log(error);
       throw error;

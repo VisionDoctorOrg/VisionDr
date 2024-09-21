@@ -17,14 +17,14 @@ model User {
   id                   String       @id @default(auto()) @map("_id") @db.ObjectId
   fullName             String?
   organizationName     String?
-  email                String?       @unique
+  email                String?      @unique
   type                 Type?
   password             String?
   DOB                  String?
   gender               String?
   occupation           String?
   hobbies              String?
-  phoneNumber          String? @unique
+  phoneNumber          String?      @unique
   subscriptionActive   Status       @default(Inactive)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
@@ -46,6 +46,8 @@ model User {
   caseFile              CaseFile?
 
   notificationPreference NotificationPreference?
+  bloodPressure          BloodPressure?
+  visionLevel            VisionLevel?
 }
 
 model NotificationPreference {
@@ -206,6 +208,25 @@ model ContactUs {
   createdAt DateTime @default(now())
 }
 
+model BloodPressure {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  systolic  Int
+  diastolic Int
+  userId    String   @unique @db.ObjectId
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VisionLevel {
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  visionLevel ColorVisionLevel
+  userId      String           @unique @db.ObjectId
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum Type {
   Individual
   Organization
@@ -220,4 +241,9 @@ enum AuthProvider {
 enum Status {
   Active
   Inactive
+}
+
+enum ColorVisionLevel {
+  Normal
+  Abnormal
 }
