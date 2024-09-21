@@ -1,8 +1,10 @@
 import {
   AuthProvider,
+  BloodPressure,
   Image,
   RefractiveErrorCheck,
   Subscription,
+  VisionLevel,
 } from '@prisma/client';
 import { BaseUser } from 'src/common';
 //import { Subscription } from 'src/domain/subscription/entities';
@@ -25,4 +27,6 @@ export class User extends BaseUser {
   subscriptions?: Subscription[];
   accessToken?: string;
   refractiveErrorCheck?: RefractiveErrorCheck;
+  bloodPressure?: BloodPressure;
+  visionLevel?: VisionLevel;
 }

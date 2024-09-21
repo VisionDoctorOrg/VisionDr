@@ -49,7 +49,7 @@ export class userRepository implements UserRepository {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+          throw new HttpException('Email or phone number already exists', HttpStatus.CONFLICT);
         }
       } else if (error instanceof Prisma.PrismaClientValidationError) {
         throw new HttpException('Validation error', HttpStatus.BAD_REQUEST);
@@ -178,6 +178,13 @@ export class userRepository implements UserRepository {
           { email: email || undefined },
           { phoneNumber: phoneNumber || undefined },
         ],
+      },
+      include: {
+        image: true,
+        subscriptions: true,
+        refractiveErrorCheck: true,
+        bloodPressure: true,
+        visionLevel: true,
       },
     });
   }
