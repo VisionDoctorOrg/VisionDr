@@ -24,7 +24,7 @@ export class AuthService {
 
   async signup(signupDto: SignupDto): Promise<User> {
     try {
-      const userDomain = AuthMapper.toDomain(signupDto); 
+      const userDomain = AuthMapper.toDomain(signupDto);
 
       if (userDomain.password !== userDomain.confirmPassword) {
         throw new HttpException(
@@ -75,20 +75,22 @@ export class AuthService {
     return null;
   }
 
-  async validateUserByEmailOrPhone(username: string, password: string): Promise<User | null> {
+  async validateUserByEmailOrPhone(
+    username: string,
+    password: string,
+  ): Promise<User | null> {
     // Check if the username is an email (assumes emails contain '@')
     const isEmail = username.includes('@');
-    
+
     // Find user by email or phone number based on the input
-    const user = isEmail 
-      ? await this.usersService.findByEmail(username)
-      : await this.usersService.findByPhoneNumber(username);
-  
-      console.log(username, password, user)
+    const user = isEmail
+      ? await this.usersService.findByEmailOrPhone(username, null)
+      : await this.usersService.findByEmailOrPhone(null,username);
+
     if (!user) {
       return null;
     }
-  
+
     // If the user signed up with Google and doesn't have a password, block them
     if (user.googleId && user.password === null) {
       throw new HttpException(
@@ -96,13 +98,13 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-  
+
     // Check if the password matches the stored hashed password
     const isPasswordValid = await compare(password, user.password);
     if (isPasswordValid) {
       return user;
     }
-  
+
     // If no valid password match, return null
     return null;
   }
@@ -178,15 +180,19 @@ export class AuthService {
     return user;
   }
 
-  async login(identifier: string): Promise<{ user: User; accessToken: string }> {
-    const user = await this.usersService.findByEmailOrPhone(identifier, identifier);
+  async login(
+    identifier: string,
+  ): Promise<{ user: User; accessToken: string }> {
+    const user = await this.usersService.findByEmailOrPhone(
+      identifier,
+      identifier,
+    );
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     const accessToken = this.jwtService.generateAuthToken(user.id, user.email);
     return { user, accessToken };
   }
-  
 
   async forgotPassword(user: User): Promise<User> {
     return await this.usersService.updateUser(user);

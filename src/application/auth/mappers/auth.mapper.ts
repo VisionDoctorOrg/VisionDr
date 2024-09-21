@@ -7,6 +7,7 @@ export class AuthMapper {
     return {
       fullName: signupDto.fullName,
       organizationName: signupDto.organizationName,
+      phoneNumber:signupDto.phoneNumber,
       email: signupDto.email,
       password: signupDto.password,
       confirmPassword: signupDto.confirmPassword,

@@ -8,7 +8,8 @@ export class LoginUseCase {
   constructor(private readonly authService: AuthService) {}
 
   async execute(data: User): Promise<User> {
-    const { user, accessToken } = await this.authService.login(data.email);
+    const identifier: string = data.email ? data.email : data.phoneNumber;
+    const { user, accessToken } = await this.authService.login(identifier);
     const loginResponse = AuthMapper.toLoginDto(user, accessToken);
 
     return loginResponse;

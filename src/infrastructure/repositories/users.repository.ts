@@ -15,6 +15,7 @@ export class userRepository implements UserRepository {
       const data: any = {
         fullName: user.fullName,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         authProvider: user.authProvider,
         organizationName: user.organizationName
           ? user.organizationName
@@ -157,15 +158,6 @@ export class userRepository implements UserRepository {
     });
   }
 
-  async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
-    console.log(phoneNumber)
-    return await this.prisma.user.findUnique({
-      where: { phoneNumber },
-      include: { image: true, subscriptions: true, refractiveErrorCheck: true },
-    });
-  }
-
-
   async findByEmailOrPhone(
     email?: string,
     phoneNumber?: string,
@@ -179,7 +171,6 @@ export class userRepository implements UserRepository {
       },
     });
   }
-  
 
   async findByResetToken(token: string): Promise<User | null> {
     return await this.prisma.user.findFirst({

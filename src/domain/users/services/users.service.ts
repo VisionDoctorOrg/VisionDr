@@ -120,18 +120,6 @@ export class UsersService {
     }
   }
 
-  async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
-    try {
-      const user = await this.userRepository.findByPhoneNumber(phoneNumber);
-      if (user) {
-        return user;
-      }
-      return null;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async findByProviderId(
     providerId: string,
     provider: AuthProvider,
