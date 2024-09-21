@@ -5,7 +5,7 @@ export abstract class BaseUser {
   fullName?: string;
   organizationName?: string;
   type?: Type;
-  email: string;
+  email?: string;
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;

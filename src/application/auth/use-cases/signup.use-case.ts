@@ -13,6 +13,14 @@ export class SignupUseCase {
     if (!signupDto.password) {
       throw new HttpException('Missing field(s)', HttpStatus.BAD_REQUEST);
     }
+
+    if (!signupDto.email && !signupDto.phoneNumber) {
+      throw new HttpException(
+        'Either email or phone number must be provided',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    
     const user = await this.authService.signup(signupDto);
     return AuthMapper.toDto(user);
   }

@@ -6,3 +6,4 @@ export class Waitlist extends BaseEntity {
 }
 
 export class Newsletter extends BaseEntity {}
+ 

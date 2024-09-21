@@ -17,14 +17,14 @@ model User {
   id                   String       @id @default(auto()) @map("_id") @db.ObjectId
   fullName             String?
   organizationName     String?
-  email                String       @unique
+  email                String?       @unique
   type                 Type?
   password             String?
   DOB                  String?
   gender               String?
   occupation           String?
   hobbies              String?
-  phoneNumber          String?
+  phoneNumber          String? @unique
   subscriptionActive   Status       @default(Inactive)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt

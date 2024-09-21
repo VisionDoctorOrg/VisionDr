@@ -120,6 +120,18 @@ export class UsersService {
     }
   }
 
+  async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
+    try {
+      const user = await this.userRepository.findByPhoneNumber(phoneNumber);
+      if (user) {
+        return user;
+      }
+      return null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findByProviderId(
     providerId: string,
     provider: AuthProvider,
@@ -141,6 +153,24 @@ export class UsersService {
   async findByResetToken(token: string): Promise<User | null> {
     try {
       return this.userRepository.findByResetToken(token);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findByEmailOrPhone(
+    email?: string,
+    phoneNumber?: string,
+  ): Promise<User | null> {
+    try {
+      const user = await this.userRepository.findByEmailOrPhone(
+        email,
+        phoneNumber,
+      );
+      if (user) {
+        return user;
+      }
+      return null;
     } catch (error) {
       throw error;
     }

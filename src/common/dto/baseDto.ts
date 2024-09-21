@@ -20,7 +20,7 @@ export class BaseDto {
     example: 'john.doe@example.com',
     description: 'The email of the user',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 }

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 import { BaseDto, Type } from 'src/common';
 
 export class SignupDto extends BaseDto {
@@ -40,4 +46,13 @@ export class SignupDto extends BaseDto {
   @IsNotEmpty()
   @IsEnum(Type)
   type: Type;
+
+  @ApiProperty({
+    example: '09087654322',
+    description: 'User phone number',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
 }
