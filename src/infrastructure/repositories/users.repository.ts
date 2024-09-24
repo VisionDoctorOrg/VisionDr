@@ -160,7 +160,13 @@ export class userRepository implements UserRepository {
   async findById(id: string): Promise<User | null> {
     return await this.prisma.user.findUnique({
       where: { id },
-      include: { image: true, subscriptions: true, refractiveErrorCheck: true },
+      include: {
+        image: true,
+        subscriptions: true,
+        refractiveErrorCheck: true,
+        bloodPressure: true,
+        visionLevel: true,
+      },
     });
   }
 
