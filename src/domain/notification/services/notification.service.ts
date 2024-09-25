@@ -47,38 +47,48 @@ export class NotificationService {
     userId: string,
     medicationReminderDto: MedicationReminderDto,
   ): Promise<MedicationReminder> {
-    // Check if a reminder for the same medication already exists for the user
-    const existingReminder =
-      await this.notificationRepository.findReminderByMedicationName(
-        medicationReminderDto.medicationName,
+    try {
+      // Check if a reminder for the same medication already exists for the user
+      const existingReminder =
+        await this.notificationRepository.findReminderByMedicationName(
+          medicationReminderDto.medicationName,
+          userId,
+        );
+
+      if (existingReminder) {
+        throw new HttpException(
+          'A reminder for this medication already exists.',
+          HttpStatus.CONFLICT,
+        );
+      }
+
+      return this.notificationRepository.createReminder(
         userId,
+        medicationReminderDto,
       );
-
-    if (existingReminder) {
-      throw new HttpException(
-        'A reminder for this medication already exists.',
-        HttpStatus.CONFLICT,
-      );
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
     }
-
-    return this.notificationRepository.createReminder(
-      userId,
-      medicationReminderDto,
-    );
   }
 
   public async deleteMedicationReminder(
     userId: string,
     reminderId: string,
   ): Promise<void> {
-    const reminder = await this.notificationRepository.findReminderById(
-      reminderId,
-      userId,
-    );
-    if (!reminder) {
-      throw new Error('Reminder not found');
+    try {
+      const reminder = await this.notificationRepository.findReminderById(
+        reminderId,
+        userId,
+      );
+      if (!reminder) {
+        throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
+      }
+      return this.notificationRepository.deleteReminder(reminderId);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
     }
-    return this.notificationRepository.deleteReminder(reminderId);
   }
 
   public async getAllMedicationReminders(
@@ -91,7 +101,12 @@ export class NotificationService {
     userId: string,
     date: string,
   ): Promise<MedicationReminder[]> {
-    return this.notificationRepository.getRemindersForToday(userId, date);
+    try {
+      return this.notificationRepository.getRemindersForToday(userId, date);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
   }
 
   public async updateReminderTimeStatus(

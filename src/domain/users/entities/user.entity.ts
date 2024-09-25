@@ -2,6 +2,7 @@ import {
   AuthProvider,
   BloodPressure,
   Image,
+  MedicationReminder,
   RefractiveErrorCheck,
   Subscription,
   VisionLevel,
@@ -29,4 +30,5 @@ export class User extends BaseUser {
   refractiveErrorCheck?: RefractiveErrorCheck;
   bloodPressure?: BloodPressure;
   visionLevel?: VisionLevel;
+  medicationReminder?: any;
 }

@@ -166,6 +166,11 @@ export class userRepository implements UserRepository {
         refractiveErrorCheck: true,
         bloodPressure: true,
         visionLevel: true,
+        medicationReminder: {
+          include: {
+            reminderTimes: true,
+          },
+        },
       },
     });
   }
@@ -179,6 +184,11 @@ export class userRepository implements UserRepository {
         refractiveErrorCheck: true,
         bloodPressure: true,
         visionLevel: true,
+        medicationReminder: {
+          include: {
+            reminderTimes: true,
+          },
+        },
       },
     });
   }
@@ -200,6 +210,11 @@ export class userRepository implements UserRepository {
         refractiveErrorCheck: true,
         bloodPressure: true,
         visionLevel: true,
+        medicationReminder: {
+          include: {
+            reminderTimes: true,
+          },
+        },
       },
     });
   }

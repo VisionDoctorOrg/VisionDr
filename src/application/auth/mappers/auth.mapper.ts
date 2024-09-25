@@ -27,6 +27,7 @@ export class AuthMapper {
         refractiveErrorCheck: user.refractiveErrorCheck,
         bloodPressure: user.bloodPressure,
         visionLevel: user.visionLevel,
+        medicationReminder: user.medicationReminder,
         image: user.image,
         createdAt: user.createdAt,
       };
@@ -44,6 +45,7 @@ export class AuthMapper {
       refractiveErrorCheck: user.refractiveErrorCheck,
       bloodPressure: user.bloodPressure,
       visionLevel: user.visionLevel,
+      medicationReminder: user.medicationReminder,
     };
   }
 
@@ -60,6 +62,7 @@ export class AuthMapper {
       refractiveErrorCheck: user.refractiveErrorCheck,
       bloodPressure: user.bloodPressure,
       visionLevel: user.visionLevel,
+      medicationReminder: user.medicationReminder,
     };
   }
 }
