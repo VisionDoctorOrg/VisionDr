@@ -17,14 +17,14 @@ model User {
   id                   String       @id @default(auto()) @map("_id") @db.ObjectId
   fullName             String?
   organizationName     String?
-  email                String?      @unique
+  email                String?
   type                 Type?
   password             String?
   DOB                  String?
   gender               String?
   occupation           String?
   hobbies              String?
-  phoneNumber          String?      @unique
+  phoneNumber          String?
   subscriptionActive   Status       @default(Inactive)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
@@ -160,18 +160,19 @@ model MedicationReminder {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  user          User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reminderTimes MedicationReminderTime[]
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminderTimes ReminderTime[]
 }
 
-model MedicationReminderTime {
-  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
-  medicationReminderId String   @db.ObjectId
-  reminderTime         DateTime
-  completed            Boolean  @default(false)
-  progress             Float    @default(0)
+model ReminderTime {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  medicationId String   @db.ObjectId
+  time         DateTime
+  day          Int
+  completed    Boolean  @default(false)
+  progress     Float    @default(0)
 
-  medicationReminder MedicationReminder @relation(fields: [medicationReminderId], references: [id], onDelete: Cascade)
+  medicationReminder MedicationReminder @relation(fields: [medicationId], references: [id], onDelete: Cascade)
 }
 
 model Image {
@@ -234,6 +235,7 @@ enum Type {
 
 enum AuthProvider {
   EMAIL
+  PHONENUMBER
   GOOGLE
   LINKEDIN
 }

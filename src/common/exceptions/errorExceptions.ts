@@ -8,9 +8,6 @@ export class NotFoundException extends HttpException {
 
 export class UserExistException extends HttpException {
   constructor(entity: string) {
-    super(
-      `${entity} with this email or phone number already exist`,
-      HttpStatus.CONFLICT,
-    );
+    super(`${entity} with email already exist`, HttpStatus.CONFLICT);
   }
 }

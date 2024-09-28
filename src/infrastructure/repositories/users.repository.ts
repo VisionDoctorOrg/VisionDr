@@ -24,17 +24,31 @@ export class userRepository implements UserRepository {
     try {
       const data: any = {
         fullName: user.fullName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
         authProvider: user.authProvider,
         organizationName: user.organizationName
           ? user.organizationName
           : undefined,
       };
       this.logger.verbose('AuthProvider:', data);
+
+      if (user.email) {
+        data.email = user.email;
+      } else if (user.phoneNumber) {
+        data.phoneNumber = user.phoneNumber;
+      } else {
+        throw new HttpException(
+          'Email or phone number is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       if (user.authProvider.toUpperCase() === AuthProvider.EMAIL) {
         data.password = user.password;
         data.authProvider = AuthProvider.EMAIL;
+        data.type = user.type;
+      } else if (user.authProvider.toUpperCase() === AuthProvider.PHONENUMBER) {
+        data.password = user.password;
+        data.authProvider = AuthProvider.PHONENUMBER;
         data.type = user.type;
       } else if (user.authProvider.toUpperCase() === AuthProvider.GOOGLE) {
         data.googleId = user.googleId;
@@ -47,14 +61,8 @@ export class userRepository implements UserRepository {
       this.logger.verbose('User to be created:', data);
       return await this.prisma.user.create({ data });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new HttpException(
-            'Email or phone number already exists',
-            HttpStatus.CONFLICT,
-          );
-        }
-      } else if (error instanceof Prisma.PrismaClientValidationError) {
+      this.logger.error(error);
+      if (error instanceof Prisma.PrismaClientValidationError) {
         throw new HttpException('Validation error', HttpStatus.BAD_REQUEST);
       }
       throw error;
@@ -176,7 +184,7 @@ export class userRepository implements UserRepository {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({
+    return await this.prisma.user.findFirst({
       where: { email },
       include: {
         image: true,
@@ -193,16 +201,60 @@ export class userRepository implements UserRepository {
     });
   }
 
+  // async findByEmailOrPhone(
+  //   email?: string,
+  //   phoneNumber?: string,
+  // ): Promise<User | null> {
+  //   console.log(email, phoneNumber);
+  //   const res = await this.prisma.user.findFirst({
+  //     where: {
+  //       OR: [
+  //         { email: email || undefined },
+  //         { phoneNumber: phoneNumber || undefined },
+  //       ],
+  //     },
+  //     include: {
+  //       image: true,
+  //       subscriptions: true,
+  //       refractiveErrorCheck: true,
+  //       bloodPressure: true,
+  //       visionLevel: true,
+  //       medicationReminder: {
+  //         include: {
+  //           reminderTimes: true,
+  //         },
+  //       },
+  //     },
+  //   });
+  //   console.log('res:', res);
+
+  //   return res;
+  // }
+
   async findByEmailOrPhone(
     email?: string,
     phoneNumber?: string,
   ): Promise<User | null> {
-    return await this.prisma.user.findFirst({
+    const conditions = [];
+
+    // Only push the condition if email is provided
+    if (email) {
+      conditions.push({ email });
+    }
+
+    // Only push the condition if phoneNumber is provided
+    if (phoneNumber) {
+      conditions.push({ phoneNumber });
+    }
+
+    // If both email and phoneNumber are undefined, return null early
+    if (conditions.length === 0) {
+      return null;
+    }
+    //console.log(conditions);
+    const res = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email: email || undefined },
-          { phoneNumber: phoneNumber || undefined },
-        ],
+        OR: conditions, // Use dynamic conditions array
       },
       include: {
         image: true,
@@ -217,6 +269,9 @@ export class userRepository implements UserRepository {
         },
       },
     });
+
+    console.log('res:', res);
+    return res;
   }
 
   async findByResetToken(token: string): Promise<User | null> {

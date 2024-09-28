@@ -22,6 +22,43 @@ export class AuthService {
     private readonly usersService: UsersService,
   ) {}
 
+  // async signup(signupDto: SignupDto): Promise<User> {
+  //   try {
+  //     const userDomain = AuthMapper.toDomain(signupDto);
+
+  //     if (userDomain.password !== userDomain.confirmPassword) {
+  //       throw new HttpException(
+  //         'Passwords do not match',
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+
+  //     userDomain.password = await hash(userDomain.password, 10);
+
+  //     const existingUser = await this.usersService.findByEmailOrPhone(
+  //       userDomain.email,
+  //     );
+  //     if (existingUser) {
+  //       throw new UserExistException('User');
+  //     }
+
+  //     const user = await this.usersService.create({
+  //       ...userDomain,
+  //       authProvider: AuthProvider.EMAIL,
+  //     });
+  //     return user;
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (error instanceof Prisma.PrismaClientValidationError) {
+  //       throw new HttpException(
+  //         'An error occurred, please check your values',
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+  //     throw error;
+  //   }
+  // }
+
   async signup(signupDto: SignupDto): Promise<User> {
     try {
       const userDomain = AuthMapper.toDomain(signupDto);
@@ -35,16 +72,32 @@ export class AuthService {
 
       userDomain.password = await hash(userDomain.password, 10);
 
-      const existingUser = await this.usersService.findByEmailOrPhone(
-        userDomain.email,
-      );
+      let authProvider: AuthProvider;
+      let searchCriteria: string;
+
+      if (userDomain.email) {
+        authProvider = AuthProvider.EMAIL;
+        searchCriteria = userDomain.email;
+      } else if (userDomain.phoneNumber) {
+        authProvider = AuthProvider.PHONENUMBER;
+        searchCriteria = userDomain.phoneNumber;
+      } else {
+        throw new HttpException(
+          'Either email or phone number is required',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const existingUser =
+        await this.usersService.findByEmailOrPhone(searchCriteria);
+
       if (existingUser) {
         throw new UserExistException('User');
       }
 
       const user = await this.usersService.create({
         ...userDomain,
-        authProvider: AuthProvider.EMAIL,
+        authProvider: authProvider,
       });
       return user;
     } catch (error) {
@@ -85,7 +138,7 @@ export class AuthService {
     // Find user by email or phone number based on the input
     const user = isEmail
       ? await this.usersService.findByEmailOrPhone(username, null)
-      : await this.usersService.findByEmailOrPhone(null,username);
+      : await this.usersService.findByEmailOrPhone(null, username);
 
     if (!user) {
       return null;
