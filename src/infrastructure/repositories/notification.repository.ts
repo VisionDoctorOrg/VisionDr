@@ -7,7 +7,7 @@ import {
   NotificationPreference,
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
-import { MedicationReminderTime } from '@prisma/client';
+import { ReminderTime } from '@prisma/client';
 
 @Injectable()
 export class notificationRepository implements NotificationRepository {
@@ -246,10 +246,10 @@ export class notificationRepository implements NotificationRepository {
   async updateReminderTimeProgress(
     reminderTimeId: string,
     progress: number,
-  ): Promise<MedicationReminderTime> {
+  ): Promise<ReminderTime> {
     try {
       try {
-        return await this.repository.medicationReminderTime.update({
+        return await this.repository.reminderTime.update({
           where: { id: reminderTimeId },
           data: { progress },
         });
@@ -264,9 +264,9 @@ export class notificationRepository implements NotificationRepository {
   async updateReminderTime(
     reminderTimeId: string,
     completed: boolean,
-  ): Promise<MedicationReminderTime> {
+  ): Promise<ReminderTime> {
     try {
-      return await this.repository.medicationReminderTime.update({
+      return await this.repository.reminderTime.update({
         where: { id: reminderTimeId },
         data: { completed },
       });
@@ -294,11 +294,9 @@ export class notificationRepository implements NotificationRepository {
     }
   }
 
-  async findReminderTimeById(
-    reminderTimeId: string,
-  ): Promise<MedicationReminderTime> {
+  async findReminderTimeById(reminderTimeId: string): Promise<ReminderTime> {
     try {
-      return this.repository.medicationReminderTime.findUnique({
+      return this.repository.reminderTime.findUnique({
         where: {
           id: reminderTimeId,
         },
