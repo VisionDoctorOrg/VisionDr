@@ -5,9 +5,10 @@ import { NotificationPreferenceDto } from 'src/application/notification';
 import {
   MedicationReminder,
   NotificationPreference,
+  ReminderTime,
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
-import { ReminderTime } from '@prisma/client';
+// import { ReminderTime } from '@prisma/client';
 
 @Injectable()
 export class notificationRepository implements NotificationRepository {
@@ -83,10 +84,10 @@ export class notificationRepository implements NotificationRepository {
   //   }
   // }
 
-  public async deleteReminder(reminderId: string): Promise<void> {
+  public async deleteReminder(reminderTimeId: string): Promise<void> {
     try {
-      await this.repository.medicationReminder.delete({
-        where: { id: reminderId },
+      await this.repository.reminderTime.delete({
+        where: { id: reminderTimeId },
       });
     } catch (error) {
       throw error;
@@ -97,6 +98,7 @@ export class notificationRepository implements NotificationRepository {
     try {
       return this.repository.medicationReminder.findMany({
         where: { userId },
+        include: { reminderTimes: true },
       });
     } catch (error) {
       throw error;
@@ -300,6 +302,13 @@ export class notificationRepository implements NotificationRepository {
         where: {
           id: reminderTimeId,
         },
+        include: {
+          medicationReminder: {
+            include: {
+              reminderTimes: true,
+            },
+          },
+        },
       });
     } catch (error) {
       throw error;
@@ -313,7 +322,7 @@ export class notificationRepository implements NotificationRepository {
           userId: userId,
           reminderTimes: {
             some: {
-              reminderTime: {
+              time: {
                 gte: new Date(date), // Beginning of the day
                 lt: new Date(new Date(date).setHours(23, 59, 59, 999)),
               },
@@ -323,13 +332,13 @@ export class notificationRepository implements NotificationRepository {
         include: {
           reminderTimes: {
             where: {
-              reminderTime: {
+              time: {
                 gte: new Date(date), // Beginning of the day
                 lt: new Date(new Date(date).setHours(23, 59, 59, 999)),
               },
             },
             orderBy: {
-              reminderTime: 'asc',
+              time: 'asc',
             },
           },
         },
@@ -365,41 +374,110 @@ export class notificationRepository implements NotificationRepository {
     };
   }
 
+  // async createReminder(
+  //   userId: string,
+  //   medicationReminderDto: MedicationReminderDto,
+  // ): Promise<any> {
+  //   const { medicationName, medicationType, dosage, times, duration } =
+  //     medicationReminderDto;
+
+  //   const medication = await this.repository.medicationReminder.create({
+  //     data: {
+  //       userId,
+  //       medicationName,
+  //       medicationType,
+  //       dosage,
+  //       duration,
+  //     },
+  //   });
+
+  //   for (let day = 0; day < duration; day++) {
+  //     for (const time of times) {
+  //       // Shifting day by +1 to start from 1
+  //       const reminderTime = this.parseTime(time, day + 1);
+  //       console.log('Generated Reminder Time:', reminderTime, 'Day:', day + 1);
+
+  //       await this.repository.reminderTime.create({
+  //         data: {
+  //           medicationId: medication.id,
+  //           time: reminderTime,
+  //           day,
+  //         },
+  //       });
+  //     }
+  //   }
+
+  //   // return medication;
+  // }
+
   async createReminder(
     userId: string,
     medicationReminderDto: MedicationReminderDto,
-  ): Promise<any> {
+  ): Promise<MedicationReminder> {
     const { medicationName, medicationType, dosage, times, duration } =
       medicationReminderDto;
 
-    // const medication = await this.repository.medicationReminder.create({
-    //   data: {
-    //     userId,
-    //     medicationName,
-    //     medicationType,
-    //     dosage,
-    //     duration,
-    //   }
-    // });
+    // Starting a transaction
+    return this.repository.$transaction(async (prisma) => {
+      // Creating the medicationReminder along with its associated reminderTimes
+      const medication = await prisma.medicationReminder.create({
+        data: {
+          userId,
+          medicationName,
+          medicationType,
+          dosage,
+          duration,
+          reminderTimes: {
+            // Creating reminderTimes for each day and each time
+            create: Array.from({ length: duration }, (_, day) =>
+              times.map((time) => ({
+                time: this.parseTime(time, day + 1), // Generating time for each reminder
+                day: day + 1, // Day starts from 1
+              })),
+            ).flat(), // Flatten the array so that all reminders are in one array
+          },
+        },
+        include: {
+          reminderTimes: true, // Include reminderTimes in the result
+        },
+      });
 
-    for (let day = 0; day < duration; day++) {
-      for (const time of times) {
-        // Shifting day by +1 to start from 1
-        const reminderTime = this.parseTime(time, day + 1);
-        console.log('Generated Reminder Time:', reminderTime, 'Day:', day + 1);
-
-        // await this.repository.medicationReminderTime.create({
-        //   data: {
-        //     medicationId: medication.id,
-        //     time: reminderTime,
-        //     day
-        //   }
-        // });
-      }
-    }
-
-    // return medication;
+      return medication; // Return the created medication with reminderTimes
+    });
   }
+
+  // async createReminder(
+  //   userId: string,
+  //   medicationReminderDto: MedicationReminderDto,
+  // ): Promise<MedicationReminder> {
+  //   const { medicationName, medicationType, dosage, times, duration } =
+  //     medicationReminderDto;
+
+  //   return this.repository.$transaction(async (prisma) => {
+  //     const medication = await prisma.medicationReminder.create({
+  //       data: {
+  //         userId,
+  //         medicationName,
+  //         medicationType,
+  //         dosage,
+  //         duration,
+  //         reminderTimes: {
+  //           create: Array.from({ length: duration }, (_, day) =>
+  //             times.map((time) => ({
+  //               time: this.parseTime(time, day + 1),
+  //               day: day + 1,
+  //             })),
+  //           ).flat(),
+  //         },
+  //       },
+  //       include: {
+  //         reminderTimes: true,
+  //       },
+  //     });
+
+  //     return medication;
+  //   });
+  // }
 
   private parseTime(timeString: string, day: number): Date {
     // Match time like 10:00AM or 12:30PM

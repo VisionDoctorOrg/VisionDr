@@ -7,8 +7,8 @@ import { UsersService } from 'src/domain/users/services/users.service';
 
 import { NotificationPreferenceDto } from 'src/application/notification';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
-import { MedicationReminder } from '../entities';
-import { MedicationReminderTime } from '@prisma/client';
+import { MedicationReminder, ReminderTime } from '../entities';
+// import { ReminderTime } from '@prisma/client';
 
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
@@ -72,23 +72,64 @@ export class NotificationService {
     }
   }
 
-  public async deleteMedicationReminder(
+  // public async deleteMedicationReminder(
+  //   userId: string,
+  //   reminderTimeId: string,
+  // ): Promise<void> {
+  //   try {
+  //     const reminder = await this.notificationRepository.findReminderTimeById(
+  //       reminderTimeId,
+  //       userId,
+  //     );
+  //     if (!reminder) {
+  //       throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
+  //     }
+  //     return this.notificationRepository.deleteReminder(reminderTimeId);
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     throw error;
+  //   }
+  // }
+
+  public async deleteReminderAndUpdateProgress(
     userId: string,
-    reminderId: string,
+    reminderTimeId: string,
   ): Promise<void> {
-    try {
-      const reminder = await this.notificationRepository.findReminderById(
-        reminderId,
-        userId,
-      );
-      if (!reminder) {
-        throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
-      }
-      return this.notificationRepository.deleteReminder(reminderId);
-    } catch (error) {
-      this.logger.error(error);
-      throw error;
+    // Fetch reminder along with medication and its reminderTimes
+    const reminder = await this.notificationRepository.findReminderTimeById(
+      reminderTimeId,
+      userId,
+    );
+
+    if (!reminder) {
+      throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
     }
+
+    // Delete the reminder time
+    await this.notificationRepository.deleteReminder(reminderTimeId);
+
+    // Recalculate progress for remaining reminders
+    const remainingReminders = reminder.medicationReminder.reminderTimes.filter(
+      (rt) => rt.id !== reminderTimeId,
+    );
+
+    const completedReminders = remainingReminders.filter(
+      (rt) => rt.completed,
+    ).length;
+
+    const progress =
+      remainingReminders.length > 0
+        ? Number(
+            ((completedReminders / remainingReminders.length) * 100).toFixed(2),
+          )
+        : 0;
+
+    // Update remaining reminders with new progress
+    const updateProgressPromises = remainingReminders.map((rt) =>
+      this.notificationRepository.updateReminderTimeProgress(rt.id, progress),
+    );
+
+    await Promise.all(updateProgressPromises);
   }
 
   public async getAllMedicationReminders(
@@ -109,12 +150,76 @@ export class NotificationService {
     }
   }
 
+  // public async updateReminderTimeStatus(
+  //   userId: string,
+  //   reminderTimeId: string,
+  //   completed: boolean,
+  // ): Promise<ReminderTime> {
+  //   try {
+  //     const existingReminderTime =
+  //       await this.notificationRepository.findReminderTimeById(
+  //         reminderTimeId,
+  //         userId,
+  //       );
+  //     if (!existingReminderTime) {
+  //       throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
+  //     }
+  //     const updatedReminderTime =
+  //       await this.notificationRepository.updateReminderTime(
+  //         reminderTimeId,
+  //         completed,
+  //       );
+
+  //     // Get Parent medication
+  //     const reminder =
+  //       await this.notificationRepository.getMedicationByReminderTimeId(
+  //         reminderTimeId,
+  //       );
+
+  //     console.log(reminder);
+  //     // Recalculate the number of completed reminders
+  //     // Total number of reminders for the specific reminder time
+  //     const totalRemindersForReminderTime = reminder.reminderTimes.length;
+
+  //     // Recalculate the number of completed reminders for this reminder time
+  //     const completedReminders = reminder.reminderTimes.filter(
+  //       (rt) => rt.completed,
+  //     ).length;
+
+  //     // Calculate the progress for this reminder time based on completed reminders
+
+  //     const progress = Number(
+  //       ((completedReminders / totalRemindersForReminderTime) * 100).toFixed(2),
+  //     );
+
+  //     const updatedReminderTimesPromises = reminder.reminderTimes.map(
+  //       async (rt) => {
+  //         console.log(rt);
+  //         return this.notificationRepository.updateReminderTimeProgress(
+  //           rt.id,
+  //           progress,
+  //         );
+  //       },
+  //     );
+
+  //     // Wait for all updates to complete
+  //     await Promise.all(updatedReminderTimesPromises);
+
+  //     // Return the specific reminder time that was updated
+  //     return updatedReminderTime;
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     throw error;
+  //   }
+  // }
+
   public async updateReminderTimeStatus(
     userId: string,
     reminderTimeId: string,
     completed: boolean,
-  ): Promise<MedicationReminderTime> {
+  ): Promise<ReminderTime> {
     try {
+      // Check if the reminder time exists for the user
       const existingReminderTime =
         await this.notificationRepository.findReminderTimeById(
           reminderTimeId,
@@ -123,37 +228,36 @@ export class NotificationService {
       if (!existingReminderTime) {
         throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
       }
+
+      // Update the completed status for the specific reminder time
       const updatedReminderTime =
         await this.notificationRepository.updateReminderTime(
           reminderTimeId,
           completed,
         );
 
-      // Get Parent medication
+      // Get the parent medication for this reminder time
       const reminder =
         await this.notificationRepository.getMedicationByReminderTimeId(
           reminderTimeId,
         );
 
-      console.log(reminder);
-      // Recalculate the number of completed reminders
-      // Total number of reminders for the specific reminder time
-      const totalRemindersForReminderTime = reminder.reminderTimes.length;
+      // Total number of reminder times associated with this medication
+      const totalRemindersForMedication = reminder.reminderTimes.length;
 
-      // Recalculate the number of completed reminders for this reminder time
+      // Count how many reminders are marked as completed
       const completedReminders = reminder.reminderTimes.filter(
         (rt) => rt.completed,
       ).length;
 
-      // Calculate the progress for this reminder time based on completed reminders
-
+      // Calculate progress based on the number of completed reminders
       const progress = Number(
-        ((completedReminders / totalRemindersForReminderTime) * 100).toFixed(2),
+        ((completedReminders / totalRemindersForMedication) * 100).toFixed(2),
       );
 
+      // Update the progress for all reminder times of this medication
       const updatedReminderTimesPromises = reminder.reminderTimes.map(
         async (rt) => {
-          console.log(rt);
           return this.notificationRepository.updateReminderTimeProgress(
             rt.id,
             progress,
@@ -161,14 +265,17 @@ export class NotificationService {
         },
       );
 
-      // Wait for all updates to complete
+      // Wait for all progress updates to complete
       await Promise.all(updatedReminderTimesPromises);
 
-      // Return the specific reminder time that was updated
+      // Return the updated reminder time that was specifically modified
       return updatedReminderTime;
     } catch (error) {
-      this.logger.error(error);
-      throw error;
+      this.logger.error(`Error updating reminder time: ${error.message}`);
+      throw new HttpException(
+        'Could not update reminder time',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

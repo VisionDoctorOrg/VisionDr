@@ -81,17 +81,17 @@ export class NotificationController {
       data: {},
     };
   }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('medication-reminders')
-  // @ApiOperation({ summary: 'Get all medication reminders' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Retrieved all medication reminders successfully.',
-  // })
-  // async getAllReminders(@CurrentUser() user: User) {
-  //   return this.notificationUseCase.getAllMedicationReminders(user.id);
-  // }
+  //
+  @UseGuards(JwtAuthGuard)
+  @Get('medication-reminders')
+  @ApiOperation({ summary: 'Get all medication reminders' })
+  @ApiResponse({
+    status: 200,
+    description: 'Retrieved all medication reminders successfully.',
+  })
+  async getAllReminders(@CurrentUser() user: User) {
+    return this.notificationUseCase.getAllMedicationReminders(user.id);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('medication-reminders')

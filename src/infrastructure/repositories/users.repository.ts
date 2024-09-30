@@ -270,7 +270,7 @@ export class userRepository implements UserRepository {
       },
     });
 
-    console.log('res:', res);
+    // console.log('res:', res);
     return res;
   }
 

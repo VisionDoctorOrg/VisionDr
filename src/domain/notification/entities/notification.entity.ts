@@ -18,7 +18,7 @@ export class MedicationReminder {
   medicationType?: string;
   dosage?: string;
   duration?: number;
-  reminderTimes?: MedicationReminderTime[];
+  reminderTimes?: ReminderTime[];
   totalRemindersForTheDay?: number;
   completedRemindersForTheDay?: number;
   userId?: string;
@@ -26,11 +26,13 @@ export class MedicationReminder {
   updatedAt?: Date;
 }
 
-export class MedicationReminderTime {
+export class ReminderTime {
   id?: string;
-  reminderTime?: Date;
+  time?: Date;
+  day?: number;
   completed?: boolean;
-  medication?: MedicationReminder;
+  medicationId?: string;
+  medicationReminder?: MedicationReminder;
   totalRemindersForTheDay?: number;
   completedRemindersForTheDay?: number;
   progress?: number;

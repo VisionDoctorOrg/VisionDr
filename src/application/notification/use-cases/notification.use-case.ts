@@ -4,10 +4,12 @@ import { NotificationService } from 'src/domain/notification/services';
 import {
   MedicationReminder,
   NotificationPreference,
+  ReminderTime,
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from '../dtos/medication-reminder.dto';
 import { NotificationMapper } from '../mappers';
-import { MedicationReminderTime } from '@prisma/client';
+// import { ReminderTime } from '@prisma/client';
+//import { MedicationReminderTime } from '@prisma/client';
 
 @Injectable()
 export class NotificationUseCase {
@@ -41,7 +43,7 @@ export class NotificationUseCase {
     userId: string,
     reminderId: string,
   ): Promise<void> {
-    return await this.notificationService.deleteMedicationReminder(
+    return await this.notificationService.deleteReminderAndUpdateProgress(
       userId,
       reminderId,
     );
@@ -64,7 +66,7 @@ export class NotificationUseCase {
     userId: string,
     reminderId: string,
     completed: boolean,
-  ): Promise<MedicationReminderTime> {
+  ): Promise<ReminderTime> {
     return await this.notificationService.updateReminderTimeStatus(
       userId,
       reminderId,
