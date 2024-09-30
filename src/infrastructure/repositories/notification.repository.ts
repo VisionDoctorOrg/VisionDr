@@ -446,39 +446,6 @@ export class notificationRepository implements NotificationRepository {
     });
   }
 
-  // async createReminder(
-  //   userId: string,
-  //   medicationReminderDto: MedicationReminderDto,
-  // ): Promise<MedicationReminder> {
-  //   const { medicationName, medicationType, dosage, times, duration } =
-  //     medicationReminderDto;
-
-  //   return this.repository.$transaction(async (prisma) => {
-  //     const medication = await prisma.medicationReminder.create({
-  //       data: {
-  //         userId,
-  //         medicationName,
-  //         medicationType,
-  //         dosage,
-  //         duration,
-  //         reminderTimes: {
-  //           create: Array.from({ length: duration }, (_, day) =>
-  //             times.map((time) => ({
-  //               time: this.parseTime(time, day + 1),
-  //               day: day + 1,
-  //             })),
-  //           ).flat(),
-  //         },
-  //       },
-  //       include: {
-  //         reminderTimes: true,
-  //       },
-  //     });
-
-  //     return medication;
-  //   });
-  // }
-
   private parseTime(timeString: string, day: number): Date {
     // Match time like 10:00AM or 12:30PM
     const regex = /^(\d{1,2}:\d{2})(AM|PM)$/;
