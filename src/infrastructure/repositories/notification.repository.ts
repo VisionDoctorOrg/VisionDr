@@ -358,10 +358,6 @@ export class notificationRepository implements NotificationRepository {
 
       return {
         ...reminder,
-        progress:
-          totalForThisMedication > 0
-            ? (completedForThisMedication / totalForThisMedication) * 100
-            : 0,
       };
     });
 
