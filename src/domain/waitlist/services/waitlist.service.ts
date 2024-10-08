@@ -5,7 +5,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { UserExistException } from 'src/common';
+import { UserEmailExistException } from 'src/common';
 import { WaitlistRepository } from '../interfaces';
 import {
   NewsLetterDto,
@@ -29,7 +29,7 @@ export class WaitlistService {
         waitlist.email,
       );
       if (existingUser) {
-        throw new UserExistException('User');
+        throw new UserEmailExistException('User');
       }
 
       await this.mailService.subscribe(waitlist.email, 'waitlist');

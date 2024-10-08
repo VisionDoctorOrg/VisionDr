@@ -29,19 +29,22 @@ export class userRepository implements UserRepository {
           ? user.organizationName
           : undefined,
       };
-      this.logger.verbose('AuthProvider:', data);
 
       if (user.email) {
         data.email = user.email;
-      } else if (user.phoneNumber) {
+      }
+      if (user.phoneNumber) {
         data.phoneNumber = user.phoneNumber;
-      } else {
+      }
+
+      if (!data.email && !data.phoneNumber) {
         throw new HttpException(
           'Email or phone number is required',
           HttpStatus.BAD_REQUEST,
         );
       }
 
+      // Handle authProvider logic
       if (user.authProvider.toUpperCase() === AuthProvider.EMAIL) {
         data.password = user.password;
         data.authProvider = AuthProvider.EMAIL;
@@ -59,6 +62,7 @@ export class userRepository implements UserRepository {
       }
 
       this.logger.verbose('User to be created:', data);
+
       return await this.prisma.user.create({ data });
     } catch (error) {
       this.logger.error(error);
@@ -201,60 +205,35 @@ export class userRepository implements UserRepository {
     });
   }
 
-  // async findByEmailOrPhone(
-  //   email?: string,
-  //   phoneNumber?: string,
-  // ): Promise<User | null> {
-  //   console.log(email, phoneNumber);
-  //   const res = await this.prisma.user.findFirst({
-  //     where: {
-  //       OR: [
-  //         { email: email || undefined },
-  //         { phoneNumber: phoneNumber || undefined },
-  //       ],
-  //     },
-  //     include: {
-  //       image: true,
-  //       subscriptions: true,
-  //       refractiveErrorCheck: true,
-  //       bloodPressure: true,
-  //       visionLevel: true,
-  //       medicationReminder: {
-  //         include: {
-  //           reminderTimes: true,
-  //         },
-  //       },
-  //     },
-  //   });
-  //   console.log('res:', res);
-
-  //   return res;
-  // }
+  async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
+    return await this.prisma.user.findFirst({
+      where: { phoneNumber },
+      include: {
+        image: true,
+        subscriptions: true,
+        refractiveErrorCheck: true,
+        bloodPressure: true,
+        visionLevel: true,
+        medicationReminder: {
+          include: {
+            reminderTimes: true,
+          },
+        },
+      },
+    });
+  }
 
   async findByEmailOrPhone(
     email?: string,
     phoneNumber?: string,
   ): Promise<User | null> {
-    const conditions = [];
-
-    // Only push the condition if email is provided
-    if (email) {
-      conditions.push({ email });
-    }
-
-    // Only push the condition if phoneNumber is provided
-    if (phoneNumber) {
-      conditions.push({ phoneNumber });
-    }
-
-    // If both email and phoneNumber are undefined, return null early
-    if (conditions.length === 0) {
-      return null;
-    }
-    //console.log(conditions);
+    console.log(email, phoneNumber);
     const res = await this.prisma.user.findFirst({
       where: {
-        OR: conditions, // Use dynamic conditions array
+        OR: [
+          { email: email || undefined },
+          { phoneNumber: phoneNumber || undefined },
+        ],
       },
       include: {
         image: true,
@@ -270,7 +249,6 @@ export class userRepository implements UserRepository {
       },
     });
 
-    // console.log('res:', res);
     return res;
   }
 

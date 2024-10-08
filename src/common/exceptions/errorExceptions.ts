@@ -6,8 +6,14 @@ export class NotFoundException extends HttpException {
   }
 }
 
-export class UserExistException extends HttpException {
+export class UserEmailExistException extends HttpException {
   constructor(entity: string) {
     super(`${entity} with email already exist`, HttpStatus.CONFLICT);
+  }
+}
+
+export class UserPhoneExistException extends HttpException {
+  constructor(entity: string) {
+    super(`${entity} with phone number already exist`, HttpStatus.CONFLICT);
   }
 }

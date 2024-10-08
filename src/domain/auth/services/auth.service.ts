@@ -8,7 +8,11 @@ import {
 import { hash, compare } from 'bcryptjs';
 import { AuthMapper } from 'src/application/auth/mappers/auth.mapper';
 import { SignupDto } from 'src/application/auth/dtos/signup.dto';
-import { JwtAuthService, UserExistException } from 'src/common';
+import {
+  JwtAuthService,
+  UserEmailExistException,
+  UserPhoneExistException,
+} from 'src/common';
 import { AuthProvider, Prisma } from '@prisma/client';
 import { User } from 'src/domain/users/entities/user.entity';
 import { ResetPasswordDto } from 'src/application/auth/dtos/reset-password.dto';
@@ -35,16 +39,32 @@ export class AuthService {
 
   //     userDomain.password = await hash(userDomain.password, 10);
 
-  //     const existingUser = await this.usersService.findByEmailOrPhone(
-  //       userDomain.email,
-  //     );
-  //     if (existingUser) {
-  //       throw new UserExistException('User');
+  //     let authProvider: AuthProvider;
+  //     let searchCriteria: string;
+
+  //     if (userDomain.email) {
+  //       authProvider = AuthProvider.EMAIL;
+  //       searchCriteria = userDomain.email;
+  //     } else if (userDomain.phoneNumber) {
+  //       authProvider = AuthProvider.PHONENUMBER;
+  //       searchCriteria = userDomain.phoneNumber;
+  //     } else {
+  //       throw new HttpException(
+  //         'Either email or phone number is required',
+  //         HttpStatus.BAD_REQUEST,
+  //       );
   //     }
+
+  //     const existingUser =
+  //       await this.usersService.findByEmailOrPhone(searchCriteria);
+
+  //     // if (existingUser) {
+  //     //   throw new UserExistException('User');
+  //     // }
 
   //     const user = await this.usersService.create({
   //       ...userDomain,
-  //       authProvider: AuthProvider.EMAIL,
+  //       authProvider: authProvider,
   //     });
   //     return user;
   //   } catch (error) {
@@ -63,6 +83,7 @@ export class AuthService {
     try {
       const userDomain = AuthMapper.toDomain(signupDto);
 
+      // Check if passwords match
       if (userDomain.password !== userDomain.confirmPassword) {
         throw new HttpException(
           'Passwords do not match',
@@ -70,17 +91,16 @@ export class AuthService {
         );
       }
 
+      // Hash the password
       userDomain.password = await hash(userDomain.password, 10);
 
       let authProvider: AuthProvider;
-      let searchCriteria: string;
 
+      // Determine the authentication provider
       if (userDomain.email) {
         authProvider = AuthProvider.EMAIL;
-        searchCriteria = userDomain.email;
       } else if (userDomain.phoneNumber) {
         authProvider = AuthProvider.PHONENUMBER;
-        searchCriteria = userDomain.phoneNumber;
       } else {
         throw new HttpException(
           'Either email or phone number is required',
@@ -88,17 +108,29 @@ export class AuthService {
         );
       }
 
-      const existingUser =
-        await this.usersService.findByEmailOrPhone(searchCriteria);
+      // Check if user already exists using both email and phone number
+      const existingUser = await this.usersService.findByEmailOrPhone(
+        userDomain.email,
+        userDomain.phoneNumber,
+      );
 
+      // Handle existing user cases
       if (existingUser) {
-        throw new UserExistException('User');
+        if (existingUser.email === userDomain.email) {
+          throw new UserEmailExistException('User');
+        }
+
+        if (existingUser.phoneNumber === userDomain.phoneNumber) {
+          throw new UserPhoneExistException('User');
+        }
       }
 
+      // Create the user
       const user = await this.usersService.create({
         ...userDomain,
-        authProvider: authProvider,
+        authProvider,
       });
+
       return user;
     } catch (error) {
       console.log(error);

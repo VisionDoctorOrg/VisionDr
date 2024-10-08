@@ -12,7 +12,12 @@ import {
 } from 'src/application/users/dtos';
 import { UpdateAdditionalInfoDto } from 'src/application/users/dtos/additional-info.dto';
 import { UpdateUserDto } from 'src/application/users/dtos/update-user.dto';
-import { CloudinaryService, PrismaService } from 'src/common';
+import {
+  CloudinaryService,
+  PrismaService,
+  UserEmailExistException,
+  UserPhoneExistException,
+} from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
 import { UserRepository } from 'src/domain/users/interfaces/user-repository.interface';
 
@@ -161,13 +166,20 @@ export class UsersService {
     phoneNumber?: string,
   ): Promise<User | null> {
     try {
-      const user = await this.userRepository.findByEmailOrPhone(
-        email,
-        phoneNumber,
-      );
-      if (user) {
-        return user;
+      if (phoneNumber) {
+        const user = await this.userRepository.findByPhoneNumber(phoneNumber);
+        if (user) {
+          return user;
+        }
       }
+
+      if (email) {
+        const user = await this.userRepository.findByEmail(email);
+        if (user) {
+          return user;
+        }
+      }
+
       return null;
     } catch (error) {
       throw error;

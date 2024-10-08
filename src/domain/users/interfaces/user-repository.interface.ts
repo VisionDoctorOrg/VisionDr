@@ -19,6 +19,8 @@ export interface UserRepository extends IRepository<User> {
 
   findByEmailOrPhone(email: string, phoneNumber: string): Promise<User | null>;
 
+  findByPhoneNumber(phoneNumber: string): Promise<User | null>;
+
   updateUser(user: User): Promise<User | null>;
 
   findById(id: string): Promise<User | null>;

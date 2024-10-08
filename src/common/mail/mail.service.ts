@@ -144,8 +144,6 @@ export class MailService {
         throw new Error('Rendered email content is empty.');
       }
 
-      console.log(emailHtml);
-
       const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
       sendSmtpEmail.subject = 'New Contact Us Form Submission';
       sendSmtpEmail.htmlContent = emailHtml;
