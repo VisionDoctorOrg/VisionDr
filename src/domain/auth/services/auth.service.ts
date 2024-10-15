@@ -17,6 +17,7 @@ import { AuthProvider, Prisma } from '@prisma/client';
 import { User } from 'src/domain/users/entities/user.entity';
 import { ResetPasswordDto } from 'src/application/auth/dtos/reset-password.dto';
 import { UsersService } from 'src/domain/users/services/users.service';
+import { SubscriptionService } from 'src/domain/subscription/services';
 
 @Injectable()
 export class AuthService {
@@ -24,60 +25,8 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtAuthService,
     private readonly usersService: UsersService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
-
-  // async signup(signupDto: SignupDto): Promise<User> {
-  //   try {
-  //     const userDomain = AuthMapper.toDomain(signupDto);
-
-  //     if (userDomain.password !== userDomain.confirmPassword) {
-  //       throw new HttpException(
-  //         'Passwords do not match',
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-
-  //     userDomain.password = await hash(userDomain.password, 10);
-
-  //     let authProvider: AuthProvider;
-  //     let searchCriteria: string;
-
-  //     if (userDomain.email) {
-  //       authProvider = AuthProvider.EMAIL;
-  //       searchCriteria = userDomain.email;
-  //     } else if (userDomain.phoneNumber) {
-  //       authProvider = AuthProvider.PHONENUMBER;
-  //       searchCriteria = userDomain.phoneNumber;
-  //     } else {
-  //       throw new HttpException(
-  //         'Either email or phone number is required',
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-
-  //     const existingUser =
-  //       await this.usersService.findByEmailOrPhone(searchCriteria);
-
-  //     // if (existingUser) {
-  //     //   throw new UserExistException('User');
-  //     // }
-
-  //     const user = await this.usersService.create({
-  //       ...userDomain,
-  //       authProvider: authProvider,
-  //     });
-  //     return user;
-  //   } catch (error) {
-  //     console.log(error);
-  //     if (error instanceof Prisma.PrismaClientValidationError) {
-  //       throw new HttpException(
-  //         'An error occurred, please check your values',
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-  //     throw error;
-  //   }
-  // }
 
   async signup(signupDto: SignupDto): Promise<User> {
     try {
@@ -129,6 +78,12 @@ export class AuthService {
       const user = await this.usersService.create({
         ...userDomain,
         authProvider,
+      });
+
+      // Automatically create a free subscription plan for the new user
+      await this.subscriptionService.initializeSubscription(user.id, {
+        amount: 0,
+        plan: 'free-plan-id',
       });
 
       return user;

@@ -5,7 +5,7 @@ import { SignupUseCase } from '../../application/auth/use-cases/signup.use-case'
 import { LoginUseCase } from '../../application/auth/use-cases/login.use-case';
 import { AuthMapper } from '../../application/auth/mappers/auth.mapper';
 import { AuthService } from './services/auth.service';
-import { JwtAuthService, PrismaService } from 'src/common';
+import { JwtAuthService } from 'src/common';
 import { userRepository } from 'src/infrastructure/repositories/users.repository';
 import { UserRepository } from '../users/interfaces/user-repository.interface';
 import { ConfigService } from '@nestjs/config';
@@ -18,10 +18,15 @@ import { MailService } from 'src/common/mail/mail.service';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { LinkedInStrategy } from './strategies/linkedin.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { SubscriptionService } from '../subscription/services';
+import { SubscriptionRepository } from '../subscription/interfaces';
+import { subscriptionRepository } from 'src/infrastructure/repositories/subscription.repository';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     PassportModule,
+    HttpModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -37,6 +42,7 @@ import { PassportModule } from '@nestjs/passport';
     AuthService,
     UsersService,
     MailService,
+    SubscriptionService,
     JwtAuthService,
     SignupUseCase,
     LoginUseCase,
@@ -50,6 +56,10 @@ import { PassportModule } from '@nestjs/passport';
     {
       provide: UserRepository,
       useClass: userRepository,
+    },
+    {
+      provide: SubscriptionRepository,
+      useClass: subscriptionRepository,
     },
   ],
   exports: [AuthService],

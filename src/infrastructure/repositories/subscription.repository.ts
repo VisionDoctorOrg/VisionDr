@@ -8,6 +8,31 @@ import { Subscription } from 'src/domain/subscription/entities';
 export class subscriptionRepository implements SubscriptionRepository {
   constructor(private readonly repository: PrismaService) {}
 
+  // public async create(event: any, userId: string): Promise<any> {
+  //   try {
+  //     const {
+  //       subscription_code,
+  //       status,
+  //       amount,
+  //       plan,
+  //       next_payment_date,
+  //       email_token,
+  //     } = event;
+  //     return await this.repository.subscription.create({
+  //       data: {
+  //         subscriptionCode: subscription_code,
+  //         userId,
+  //         plan: plan.name,
+  //         status,
+  //         amount,
+  //         email_token,
+  //         nextPaymentDate: new Date(next_payment_date),
+  //       },
+  //     });
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
   public async create(event: any, userId: string): Promise<any> {
     try {
       const {
@@ -22,11 +47,13 @@ export class subscriptionRepository implements SubscriptionRepository {
         data: {
           subscriptionCode: subscription_code,
           userId,
-          plan: plan.name,
-          status,
-          amount,
-          email_token,
-          nextPaymentDate: new Date(next_payment_date),
+          plan: plan, // plan.name or plan ID for the free plan
+          status, // 'active' for free plan
+          amount, // 0 for free plan
+          email_token, // null for free plan
+          nextPaymentDate: next_payment_date
+            ? new Date(next_payment_date)
+            : null,
         },
       });
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { PrismaService } from 'src/common';
 import {} from 'src/application/contactUs';
 import { SubscriptionRepository } from './interfaces';
@@ -10,8 +10,9 @@ import {
   SubscriptionUseCase,
 } from 'src/application/subscription';
 import { subscriptionRepository } from 'src/infrastructure/repositories/subscription.repository';
-import { HttpModule } from '@nestjs/axios';
+import { HttpModule, HttpService } from '@nestjs/axios';
 
+@Global()
 @Module({
   imports: [
     HttpModule.registerAsync({
@@ -34,5 +35,6 @@ import { HttpModule } from '@nestjs/axios';
       useClass: subscriptionRepository,
     },
   ],
+  //exports: [HttpService],
 })
 export class SubscriptionModule {}
