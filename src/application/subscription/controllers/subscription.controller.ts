@@ -8,6 +8,7 @@ import {
   Res,
   Param,
   Logger,
+  Get,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response, Request } from 'express';
@@ -51,10 +52,19 @@ export class SubscriptionController {
   @UseGuards(JwtAuthGuard)
   @Post('cancel/:subscriptionId')
   public async cancelSubscription(
-    //@CurrentUser() user: User,
     @Param('subscriptionId') subscriptionId: string,
   ) {
     return await this.subscriptionUseCase.cancelSubscription(subscriptionId);
+  }
+
+  @Get('plans')
+  @ApiOperation({ summary: ' Subscription Plans' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully fetched plans',
+  })
+  public async SubscriptionPlans(): Promise<any> {
+    return await this.subscriptionUseCase.SubscriptionPlans();
   }
 
   @Post('webhook')
@@ -70,6 +80,7 @@ export class SubscriptionController {
     this.logger.debug(hash == req.headers['x-paystack-signature']);
     if (hash == req.headers['x-paystack-signature']) {
       console.log(hash);
+      this.logger.warn('Crypto hash:', hash);
       const event = req.body;
       this.logger.verbose('Subscription hash data:', event);
     }

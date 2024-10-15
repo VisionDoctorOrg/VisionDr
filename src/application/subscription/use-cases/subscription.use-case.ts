@@ -34,4 +34,8 @@ export class SubscriptionUseCase {
 
     return subscription;
   }
+
+  public async SubscriptionPlans(): Promise<any> {
+    return await this.subscriptionService.subscriptionPlans();
+  }
 }

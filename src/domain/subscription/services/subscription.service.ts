@@ -64,6 +64,34 @@ export class SubscriptionService {
     }
   }
 
+  public async subscriptionPlans(): Promise<any> {
+    try {
+      this.logger.debug('About to fetch subscription...');
+      //const user = await this.usersService.findUserById(userId);
+      const url = `${this.baseUrl}/plan`;
+      const headers = { Authorization: `Bearer ${this.secretKey}` };
+      // const data = {
+      //   email: user.email,
+      //   amount: createSubscriptionDto.amount,
+      //   plan: createSubscriptionDto.plan,
+      // };
+
+      const response = await firstValueFrom(
+        this.httpService.get(url, { headers }),
+      );
+
+      this.logger.debug('Subscription plans successfully fetched');
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        this.logger.error('Error response data:', error.response.data);
+        throw new Error(`Paystack error: ${error.response.data.message}`);
+      }
+      this.logger.error('Error fetch subscription plans:', error.message);
+      throw new Error('Error fetch subscription plans');
+    }
+  }
+
   public async handleWebhook(event: any, res: Response) {
     try {
       if (event.event === 'subscription.create') {
