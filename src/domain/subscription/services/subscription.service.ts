@@ -242,6 +242,13 @@ export class SubscriptionService {
         );
       }
 
+      if (!subscription.email_token) {
+        throw new HttpException(
+          'No actively paid subscription found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       const url = `${this.baseUrl}/subscription/disable`;
       const headers = { Authorization: `Bearer ${this.secretKey}` };
       const data = {

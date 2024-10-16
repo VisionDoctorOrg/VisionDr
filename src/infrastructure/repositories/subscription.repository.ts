@@ -8,31 +8,6 @@ import { Subscription } from 'src/domain/subscription/entities';
 export class subscriptionRepository implements SubscriptionRepository {
   constructor(private readonly repository: PrismaService) {}
 
-  // public async create(event: any, userId: string): Promise<any> {
-  //   try {
-  //     const {
-  //       subscription_code,
-  //       status,
-  //       amount,
-  //       plan,
-  //       next_payment_date,
-  //       email_token,
-  //     } = event;
-  //     return await this.repository.subscription.create({
-  //       data: {
-  //         subscriptionCode: subscription_code,
-  //         userId,
-  //         plan: plan.name,
-  //         status,
-  //         amount,
-  //         email_token,
-  //         nextPaymentDate: new Date(next_payment_date),
-  //       },
-  //     });
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
   public async create(event: any, userId: string): Promise<any> {
     try {
       const {
@@ -72,6 +47,23 @@ export class subscriptionRepository implements SubscriptionRepository {
         email_token,
         authorization,
       } = event.data;
+
+      // 1. Find any active subscription for the user
+      const activeSubscription = await this.repository.subscription.findFirst({
+        where: {
+          userId,
+          status: 'Active',
+        },
+      });
+
+      // 2. If there is an active subscription, mark it as inactive
+      if (activeSubscription) {
+        await this.repository.subscription.update({
+          where: { id: activeSubscription.id },
+          data: { status: 'Inactive' },
+        });
+      }
+
       return await this.repository.subscription.upsert({
         where: { subscriptionCode: subscription_code },
         update: {
