@@ -50,26 +50,24 @@ export class subscriptionRepository implements SubscriptionRepository {
         authorization,
       } = event.data;
 
-      // 1. Find any active subscription for the user
-      const activeSubscription = await this.repository.subscription.findFirst({
+      // 1. Find all active subscriptions for the user
+      const activeSubscriptions = await this.repository.subscription.findMany({
         where: {
           userId,
           status: 'active',
         },
       });
 
-      this.logger.debug(
-        `finding user active Subscription:`,
-        activeSubscription,
-      );
-
-      // 2. If there is an active subscription, mark it as inactive.
-      if (activeSubscription) {
-        this.logger.debug(`Updating user subscription status to inactive`);
-        await this.repository.subscription.update({
-          where: { id: activeSubscription.id },
-          data: { status: 'inactive' },
-        });
+      // 2. If there are active subscriptions, mark them as inactive
+      if (activeSubscriptions && activeSubscriptions.length > 0) {
+        await Promise.all(
+          activeSubscriptions.map((subscription) =>
+            this.repository.subscription.update({
+              where: { id: subscription.id },
+              data: { status: 'inactive' },
+            }),
+          ),
+        );
       }
 
       return await this.repository.subscription.upsert({
