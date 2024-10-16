@@ -58,7 +58,7 @@ export class subscriptionRepository implements SubscriptionRepository {
         },
       });
 
-      // 2. If there are active subscriptions, mark them as inactive
+      // 2. If there are active subscriptions, mark them as inactive.
       if (activeSubscriptions && activeSubscriptions.length > 0) {
         await Promise.all(
           activeSubscriptions.map((subscription) =>
