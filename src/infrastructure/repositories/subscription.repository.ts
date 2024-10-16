@@ -52,15 +52,15 @@ export class subscriptionRepository implements SubscriptionRepository {
       const activeSubscription = await this.repository.subscription.findFirst({
         where: {
           userId,
-          status: 'Active',
+          status: 'active',
         },
       });
 
-      // 2. If there is an active subscription, mark it as inactive
+      // 2. If there is an active subscription, mark it as inactive.
       if (activeSubscription) {
         await this.repository.subscription.update({
           where: { id: activeSubscription.id },
-          data: { status: 'Inactive' },
+          data: { status: 'inactive' },
         });
       }
 
