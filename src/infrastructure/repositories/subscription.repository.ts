@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/common';
 import { CreateSubscriptionDto } from 'src/application/subscription';
 import { SubscriptionRepository } from 'src/domain/subscription/interfaces';
@@ -6,6 +6,7 @@ import { Subscription } from 'src/domain/subscription/entities';
 
 @Injectable()
 export class subscriptionRepository implements SubscriptionRepository {
+  private readonly logger = new Logger(subscriptionRepository.name);
   constructor(private readonly repository: PrismaService) {}
 
   public async create(event: any, userId: string): Promise<any> {
@@ -37,6 +38,7 @@ export class subscriptionRepository implements SubscriptionRepository {
   }
 
   public async upsertSubscription(userId: string, event: any): Promise<any> {
+    this.logger.debug(`upsertSubscription repository method starting...`);
     try {
       const {
         subscription_code,
@@ -56,8 +58,14 @@ export class subscriptionRepository implements SubscriptionRepository {
         },
       });
 
+      this.logger.debug(
+        `finding user active Subscription:`,
+        activeSubscription,
+      );
+
       // 2. If there is an active subscription, mark it as inactive.
       if (activeSubscription) {
+        this.logger.debug(`Updating user subscription status to inactive`);
         await this.repository.subscription.update({
           where: { id: activeSubscription.id },
           data: { status: 'inactive' },
@@ -87,6 +95,7 @@ export class subscriptionRepository implements SubscriptionRepository {
           account_name: authorization.account_name,
           nextPaymentDate: new Date(next_payment_date),
         },
+
         create: {
           subscriptionCode: subscription_code,
           userId,

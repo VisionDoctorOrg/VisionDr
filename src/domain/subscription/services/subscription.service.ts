@@ -184,7 +184,7 @@ export class SubscriptionService {
           // Use repository to update subscription status
           await this.subscriptionRepository.upsertSubscription(user.id, event);
 
-          this.logger.debug(`Updating user subscription status to inactive`);
+          this.logger.debug(`Updating user subscription status to Active`);
           await this.usersService.updateUserSubscriptionStatus(
             user.id,
             'Active',
