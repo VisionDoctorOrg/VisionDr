@@ -7,6 +7,7 @@ import {
   Get,
   Req,
   Request,
+  Res,
 } from '@nestjs/common';
 import { SignupDto } from '../dtos/signup.dto';
 import { LoginDto } from '../dtos/login.dto';
@@ -64,9 +65,7 @@ export class AuthController {
     description: 'Unauthorized.',
   })
   async login(@Body() loginDto: LoginDto, @Request() req): Promise<response> {
-  
     const response = await this.loginUseCase.execute(req.user);
-    
 
     return {
       status: true,
@@ -137,9 +136,10 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
+  async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
       console.log('User:', req.user);
+      res.redirect('https://visiondoctors.africa/app/dashboard');
     } else {
       console.error('User object is missing');
     }
