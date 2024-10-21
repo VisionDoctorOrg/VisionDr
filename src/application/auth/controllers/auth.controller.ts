@@ -131,17 +131,24 @@ export class AuthController {
   @Get('google')
   @UseGuards(GoogleOauthGuard)
   async googleAuth(@Req() req) {
-    console.log('req.user from google brfore the callback hook', req.user);
+    console.log('req.user from google before the callback hook', req.user);
   }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
-      console.log('User:', req.user);
-      res.redirect('https://visiondoctors.africa/app/dashboard');
+      const response = await this.loginUseCase.execute(req.user);
+
+      return {
+        status: true,
+        message: 'Successfully authenticated',
+        data: { ...response },
+      };
+
+      // res.redirect('https://visiondoctors.africa/app/dashboard');
     } else {
-      console.error('User object is missing');
+      return res.redirect('/login');
     }
   }
 
