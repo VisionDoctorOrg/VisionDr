@@ -27,6 +27,8 @@ export interface UserRepository extends IRepository<User> {
 
   findByResetToken(token: string): Promise<User | null>;
 
+  findByActivationToken(token: string): Promise<User | null>;
+
   getAdditionalInfo(userId: string): Promise<AdditionalInformation | null>;
 
   updateAdditionalInformation(

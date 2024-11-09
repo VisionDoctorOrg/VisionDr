@@ -41,7 +41,7 @@ export class AuthService {
       }
 
       // Hash the password
-      userDomain.password = await hash(userDomain.password, 10);
+      userDomain.password = await hash(userDomain.password, 10); 
 
       let authProvider: AuthProvider;
 
@@ -234,11 +234,11 @@ export class AuthService {
     return { user, accessToken };
   }
 
-  async forgotPassword(user: User): Promise<User> {
-    return await this.usersService.updateUser(user);
+  async updateUser(user: User): Promise<User> {
+    return await this.usersService.updateUser(user); 
   }
 
-  public async resetPassword(
+  public async resetPassword( 
     resetPasswordDto: ResetPasswordDto,
   ): Promise<User> {
     const user = await this.usersService.findByResetToken(
@@ -260,6 +260,27 @@ export class AuthService {
     user.password = await hash(resetPasswordDto.newPassword, 10);
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
+
+    return await this.usersService.updateUser(user);
+  }
+
+  public async verifyToken(
+    token: string,
+  ): Promise<User> {
+    const user = await this.usersService.findByActivationToken(
+      token,
+    );
+
+    // Check if the token is valid and not expired
+    if (!user || user.tokenExpires < new Date()) {
+      throw new HttpException(
+        'Invalid or expired token',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    user.token = null;
+    user.tokenExpires = null;
 
     return await this.usersService.updateUser(user);
   }

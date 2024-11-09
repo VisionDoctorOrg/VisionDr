@@ -25,6 +25,7 @@ model User {
   occupation           String?
   hobbies              String?
   phoneNumber          String?
+  activivated          Status @default(Inactive)
   subscriptionActive   Status       @default(Inactive)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
@@ -33,6 +34,8 @@ model User {
   authProvider         AuthProvider
   resetPasswordToken   String?
   resetPasswordExpires DateTime?
+  token   String?
+  tokenExpires DateTime?
 
   subscriptions      Subscription[]
   medicationReminder MedicationReminder[]
@@ -243,6 +246,7 @@ enum AuthProvider {
 enum Status {
   Active
   Inactive
+  Deactivated
 }
 
 enum ColorVisionLevel {
