@@ -22,11 +22,11 @@ export class ForgotPasswordUseCase {
     }
 
     // Generate reset token
-    const resetToken = randomBytes(32).toString('hex');
+    const resetToken = randomBytes(32).toString('hex'); 
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    const response = await this.authService.forgotPassword(user);
+    const response = await this.authService.updateUser(user);
 
     // Send reset email
     const resetUrl = `${this.configService.get<string>('FRONT_URL')}/reset-password?token=${resetToken}`;

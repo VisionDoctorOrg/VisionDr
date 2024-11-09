@@ -8,6 +8,7 @@ import {
   Req,
   Request,
   Res,
+  Query,
 } from '@nestjs/common';
 import { SignupDto } from '../dtos/signup.dto';
 import { LoginDto } from '../dtos/login.dto';
@@ -125,6 +126,28 @@ export class AuthController {
       status: true,
       message: 'Password successfully reset',
       ...response,
+    };
+  }
+
+  @Post('activate')
+  @ApiOperation({ summary: 'Activate a new user account' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User account activated successfully.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid or expired token.',
+  })
+  async activateAccount(@Query('token') token: string): Promise<response> {
+    const user = await this.signupUseCase.executeVerification(token);
+    return {
+      status: true,
+      message: 'Account activated successfully. You can now login.',
+      data: {
+        type: user.type,
+        isOrganization: !!user.organizationName,
+      },
     };
   }
 

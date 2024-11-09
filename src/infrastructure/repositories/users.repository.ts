@@ -94,6 +94,8 @@ export class userRepository implements UserRepository {
             password: user.password,
             resetPasswordToken: user?.resetPasswordToken,
             resetPasswordExpires: user?.resetPasswordExpires,
+            token: user?.token,
+            tokenExpires: user?.tokenExpires,
             linkedinId: user?.linkedinId,
             googleId: user?.googleId,
             email: user.email,
@@ -258,6 +260,12 @@ export class userRepository implements UserRepository {
     });
   }
 
+  async findByActivationToken(token: string): Promise<User | null> {
+    return await this.prisma.user.findFirst({
+      where: { token },
+    });
+  }
+
   async findByProviderId(
     providerId: string,
     provider: AuthProvider,
@@ -365,3 +373,5 @@ export class userRepository implements UserRepository {
     }
   }
 }
+
+

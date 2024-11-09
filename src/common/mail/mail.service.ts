@@ -223,4 +223,59 @@ export class MailService {
       );
     }
   }
+
+  public async sendActivationEmail(
+    email: string,
+    fullName: string,
+    resetUrl: string,
+  ): Promise<void> {
+    this.logger.log('Sending password reset email...');
+
+    try {
+      // Define the reset password template
+      const activationTemplate = `
+        <p>Hello {{fullName}},</p>
+        <p>This is a one-time token. Please click on the link below to activate your account:</p>
+        <a href="{{resetUrl}}">Reset Password</a>
+        <p>This link is valid for 10 minutes.</p>
+
+        <p>If you did not request this, please ignore this email.</p>
+      `;
+
+      // Compile the template
+      const compiledTemplate = handlebars.compile(activationTemplate);
+
+      // Render the template with the reset URL
+      const emailHtml = compiledTemplate({ resetUrl, fullName });
+
+      if (!emailHtml) {
+        throw new Error('Rendered email content is empty.');
+      }
+
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+      sendSmtpEmail.subject = 'Account Activation';
+      sendSmtpEmail.htmlContent = emailHtml;
+      sendSmtpEmail.sender = {
+        name: this.configService.get<string>('SENDERNAME'),
+        email: this.configService.get<string>('MAIL_FROM'),
+      };
+      sendSmtpEmail.to = [{ email, name: 'User' }];
+
+      this.logger.log('Sending Email Payload:', JSON.stringify(sendSmtpEmail));
+
+      const response = await this.brevoApi.sendTransacEmail(sendSmtpEmail);
+
+      this.logger.log('Brevo Response:', JSON.stringify(response));
+      this.logger.log(
+        'Account activation email sent successfully. Response: ' +
+          JSON.stringify(response),
+      );
+    } catch (e) {
+      this.logger.error('Error while sending activation email.', e.stack);
+      throw new HttpException(
+        'Failed to send activation email.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

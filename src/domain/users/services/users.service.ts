@@ -37,7 +37,7 @@ export class UsersService {
     }
   }
 
-  async updateUser(user: User): Promise<User> {
+  async updateUser(user: User): Promise<User> { 
     try {
       return await this.userRepository.updateUser(user);
     } catch (error) {
@@ -156,6 +156,14 @@ export class UsersService {
   async findByResetToken(token: string): Promise<User | null> {
     try {
       return this.userRepository.findByResetToken(token);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findByActivationToken(token: string): Promise<User | null> {
+    try {
+      return this.userRepository.findByActivationToken(token);
     } catch (error) {
       throw error;
     }
