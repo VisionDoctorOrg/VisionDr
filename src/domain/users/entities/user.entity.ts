@@ -19,6 +19,7 @@ export class User extends BaseUser {
   resetPasswordExpires?: Date;
   token?: string;
   tokenExpires?:Date
+  status?:string
   confirmPassword?: string;
   phoneNumber?: string;
   DOB?: string;

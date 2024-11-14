@@ -49,7 +49,7 @@ export class AuthController {
     const user = await this.signupUseCase.execute(signupDto);
     return {
       status: true,
-      message: 'Signup successfully',
+      message: 'Please check your email to activate your account',
       data: { ...user },
     };
   }

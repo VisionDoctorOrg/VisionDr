@@ -25,7 +25,7 @@ model User {
   occupation           String?
   hobbies              String?
   phoneNumber          String?
-  activivated          Status @default(Inactive)
+  activated          Status @default(Inactive)
   subscriptionActive   Status       @default(Inactive)
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
