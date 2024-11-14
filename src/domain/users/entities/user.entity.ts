@@ -4,6 +4,7 @@ import {
   Image,
   MedicationReminder,
   RefractiveErrorCheck,
+  Status,
   Subscription,
   VisionLevel,
 } from '@prisma/client';
@@ -19,7 +20,7 @@ export class User extends BaseUser {
   resetPasswordExpires?: Date;
   token?: string;
   tokenExpires?:Date
-  status?:string
+  activated?:Status
   confirmPassword?: string;
   phoneNumber?: string;
   DOB?: string;

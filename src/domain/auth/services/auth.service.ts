@@ -13,7 +13,7 @@ import {
   UserEmailExistException,
   UserPhoneExistException,
 } from 'src/common';
-import { AuthProvider, Prisma } from '@prisma/client';
+import { AuthProvider, Prisma, Status } from '@prisma/client';
 import { User } from 'src/domain/users/entities/user.entity';
 import { ResetPasswordDto } from 'src/application/auth/dtos/reset-password.dto';
 import { UsersService } from 'src/domain/users/services/users.service';
@@ -226,7 +226,7 @@ export class AuthService {
     const user = await this.usersService.findByEmailOrPhone(
       identifier,
       identifier,
-    );
+    ); 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -260,6 +260,7 @@ export class AuthService {
     user.password = await hash(resetPasswordDto.newPassword, 10);
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
+    user.activated = Status.Active;
 
     return await this.usersService.updateUser(user);
   }
