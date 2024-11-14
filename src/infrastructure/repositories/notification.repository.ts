@@ -8,7 +8,7 @@ import {
   ReminderTime,
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
-// import { ReminderTime } from '@prisma/client';
+
 
 @Injectable()
 export class notificationRepository implements NotificationRepository {
@@ -28,9 +28,9 @@ export class notificationRepository implements NotificationRepository {
         return await this.repository.notificationPreference.create({
           data: {
             userId,
-            email: preference.email,
-            sms: preference.sms,
-            whatsapp: preference.whatsapp,
+            emailEnabled: preference.emailEnabled,
+            smsEnabled: preference.smsEnabled,
+            whatsappEnabled: preference.whatsappEnabled,
             medicationReminder: preference.medicationReminder,
             paymentReminder: preference.paymentReminder,
           },
@@ -40,9 +40,9 @@ export class notificationRepository implements NotificationRepository {
       return await this.repository.notificationPreference.update({
         where: { userId },
         data: {
-          email: preference.email,
-          sms: preference.sms,
-          whatsapp: preference.whatsapp,
+          emailEnabled: preference.emailEnabled,
+          smsEnabled: preference.smsEnabled,
+          whatsappEnabled: preference.whatsappEnabled,
           medicationReminder: preference.medicationReminder,
           paymentReminder: preference.paymentReminder,
         },
@@ -52,37 +52,6 @@ export class notificationRepository implements NotificationRepository {
       throw new Error('Error creating or updating preferences');
     }
   }
-
-  // public async createReminder(
-  //   userId: string,
-  //   medicationReminderDto: MedicationReminderDto,
-  // ): Promise<MedicationReminder> {
-  //   try {
-  //     const reminder = await this.repository.medicationReminder.create({
-  //       data: {
-  //         userId,
-  //         medicationName: medicationReminderDto.medicationName,
-  //         medicationType: medicationReminderDto.medicationType,
-  //         dosage: medicationReminderDto.dosage,
-  //         duration: medicationReminderDto.duration,
-  //         reminderTimes: {
-  //           create: medicationReminderDto.reminderTimes.map((time) => ({
-  //             reminderTime: new Date(time.reminderTime),
-  //             completed: time.completed || false,
-  //           })),
-  //         },
-  //       },
-  //       include: {
-  //         reminderTimes: true,
-  //       },
-  //     });
-
-  //     return reminder;
-  //   } catch (error) {
-  //     console.error('Error creating medication reminder:', error);
-  //     throw error;
-  //   }
-  // }
 
   public async deleteReminder(reminderTimeId: string): Promise<void> {
     try {
@@ -136,114 +105,6 @@ export class notificationRepository implements NotificationRepository {
       throw error;
     }
   }
-
-  // async getRemindersForToday(userId: string, date: string): Promise<any> {
-  //   // Step 1: Fetch medication reminders for the user for the specified day
-  //   const medicationReminders =
-  //     await this.repository.medicationReminder.findMany({
-  //       where: {
-  //         userId: userId,
-  //         reminderTimes: {
-  //           some: {
-  //             reminderTime: {
-  //               gte: new Date(date), // Beginning of the day
-  //               lt: new Date(new Date(date).setHours(23, 59, 59, 999)), // End of the day
-  //             },
-  //           },
-  //         },
-  //       },
-  //       include: {
-  //         reminderTimes: true,
-  //       },
-  //     });
-
-  //   // Step 2: Initialize counters for tracking overall progress
-  //   let totalRemindersForTheDay = 0;
-  //   let completedRemindersForTheDay = 0;
-
-  //   // Step 3: Calculate progress for each medication
-  //   const medicationsWithProgress = medicationReminders.map((reminder) => {
-  //     // Filter reminder times for the specific day
-  //     const todaysReminders = reminder.reminderTimes.filter(
-  //       (rt) =>
-  //         rt.reminderTime.toDateString() === new Date(date).toDateString(),
-  //     );
-
-  //     const totalForThisMedication = todaysReminders.length;
-  //     const completedForThisMedication = todaysReminders.filter(
-  //       (rt) => rt.completed,
-  //     ).length;
-
-  //     // Update total counters for the day
-  //     totalRemindersForTheDay += totalForThisMedication;
-  //     completedRemindersForTheDay += completedForThisMedication;
-
-  //     return {
-  //       ...reminder,
-  //     };
-  //   });
-
-  //   // Step 4:
-
-  //   // Step 5: Return the result, including total and individual progress
-  //   return {
-  //     medications: medicationsWithProgress,
-  //     totalRemindersForTheDay,
-  //     completedRemindersForTheDay,
-  //   };
-  // }
-
-  // async getRemindersForToday(userId: string, date: string): Promise<any> {
-  //   // Fetch medication reminders for the user for the specified day
-  //   const medicationReminders =
-  //     await this.repository.medicationReminder.findMany({
-  //       where: {
-  //         userId: userId,
-  //         reminderTimes: {
-  //           some: {
-  //             reminderTime: {
-  //               gte: new Date(date), // Beginning of the day
-  //               lt: new Date(new Date(date).setHours(23, 59, 59, 999)), // End of the day
-  //             },
-  //           },
-  //         },
-  //       },
-  //       include: {
-  //         reminderTimes: true,
-  //       },
-  //     });
-
-  //   // Track progress for each medication
-  //   const medicationsWithProgress = medicationReminders.map((reminder) => {
-  //     // Get reminder times for the specific day
-  //     const todaysReminders = reminder.reminderTimes.filter(
-  //       (rt) =>
-  //         rt.reminderTime.toDateString() === new Date(date).toDateString(),
-  //     );
-
-  //     // Calculate progress for each medication
-  //     const totalForThisMedication = todaysReminders.length;
-  //     const completedForThisMedication = todaysReminders.filter(
-  //       (rt) => rt.completed,
-  //     ).length;
-
-  //     const progress =
-  //       totalForThisMedication > 0
-  //         ? (completedForThisMedication / totalForThisMedication) * 100
-  //         : 0;
-
-  //     return {
-  //       ...reminder,
-  //       progress: progress.toFixed(2),
-  //       completedForThisMedication,
-  //       totalForThisMedication,
-  //     };
-  //   });
-
-  //   return {
-  //     medications: medicationsWithProgress,
-  //   };
-  // }
 
   async updateReminderTimeProgress(
     reminderTimeId: string,
@@ -369,42 +230,6 @@ export class notificationRepository implements NotificationRepository {
         totalReminders > 0 ? (completedReminders / totalReminders) * 100 : 0,
     };
   }
-
-  // async createReminder(
-  //   userId: string,
-  //   medicationReminderDto: MedicationReminderDto,
-  // ): Promise<any> {
-  //   const { medicationName, medicationType, dosage, times, duration } =
-  //     medicationReminderDto;
-
-  //   const medication = await this.repository.medicationReminder.create({
-  //     data: {
-  //       userId,
-  //       medicationName,
-  //       medicationType,
-  //       dosage,
-  //       duration,
-  //     },
-  //   });
-
-  //   for (let day = 0; day < duration; day++) {
-  //     for (const time of times) {
-  //       // Shifting day by +1 to start from 1
-  //       const reminderTime = this.parseTime(time, day + 1);
-  //       console.log('Generated Reminder Time:', reminderTime, 'Day:', day + 1);
-
-  //       await this.repository.reminderTime.create({
-  //         data: {
-  //           medicationId: medication.id,
-  //           time: reminderTime,
-  //           day,
-  //         },
-  //       });
-  //     }
-  //   }
-
-  //   // return medication;
-  // }
 
   async createReminder(
     userId: string,

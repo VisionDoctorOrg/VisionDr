@@ -26,9 +26,9 @@ export class NotificationService {
     try {
       return await this.notificationRepository.create(
         {
-          email: notificationPreference.email,
-          sms: notificationPreference.sms,
-          whatsapp: notificationPreference.whatsapp,
+          emailEnabled: notificationPreference.emailEnabled,
+          smsEnabled: notificationPreference.smsEnabled,
+          whatsappEnabled: notificationPreference.whatsappEnabled,
           paymentReminder: notificationPreference.paymentReminder,
           medicationReminder: notificationPreference.medicationReminder,
         },
