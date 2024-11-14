@@ -282,6 +282,7 @@ export class AuthService {
 
     user.token = null;
     user.tokenExpires = null;
+    user.activated = Status.Active;
 
     return await this.usersService.updateUser(user);
   }

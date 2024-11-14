@@ -135,11 +135,7 @@ export class AuthController {
     status: HttpStatus.OK,
     description: 'User account activated successfully.',
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid or expired token.',
-  })
-  async activateAccount(@Query('token') token: string): Promise<response> {
+  async activateAccount(@Query('Activation Token') token: string): Promise<response> {
     const user = await this.signupUseCase.executeVerification(token);
     return {
       status: true,

@@ -3,6 +3,7 @@ import {
   AuthProvider,
   BloodPressure,
   Prisma,
+  Status,
   VisionLevel,
 } from '@prisma/client';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
@@ -84,6 +85,11 @@ export class userRepository implements UserRepository {
         imageId,
         phoneNumber,
         fullName,
+        token,
+        tokenExpires,
+        activated,
+        resetPasswordExpires,
+        resetPasswordToken
       } = userData;
       const user = await this.findByEmail(email);
       this.logger.warn('User to be updated:', userData);
@@ -92,10 +98,11 @@ export class userRepository implements UserRepository {
           where: { id: user.id },
           data: {
             password: user.password,
-            resetPasswordToken: user?.resetPasswordToken,
-            resetPasswordExpires: user?.resetPasswordExpires,
-            token: user?.token,
-            tokenExpires: user?.tokenExpires,
+            resetPasswordToken,
+            resetPasswordExpires,
+            activated,
+            token,
+            tokenExpires,
             linkedinId: user?.linkedinId,
             googleId: user?.googleId,
             email: user.email,

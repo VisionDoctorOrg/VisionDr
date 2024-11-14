@@ -10,7 +10,11 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SignupUseCase {
-  constructor(private readonly authService: AuthService, private readonly mailService: MailService,private readonly configService: ConfigService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailService: MailService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async execute(signupDto: SignupDto): Promise<User> {
     if (!signupDto.password) {
@@ -31,26 +35,18 @@ export class SignupUseCase {
     user.token = token;
     user.tokenExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-
     // Save user with token details
-    await this.authService.updateUser(user); 
+    await this.authService.updateUser(user);
 
     // Send activation email
-      const activationUrl = `${this.configService.get<string>('FRONT_URL')}/auth/activate?token=${token}`;
-      await this.mailService.sendActivationEmail(
-        user.email,
-        user.fullName,
-        activationUrl,
-      );
+    const activationUrl = `${this.configService.get<string>('FRONT_URL')}/auth/activate?token=${token}`;
+    await this.mailService.sendActivationEmail(
+      user.email,
+      user.fullName,
+      activationUrl,
+    );
 
     return AuthMapper.toDto(user);
-
-
-    
-    
-
-
-
   }
 
   async executeVerification(token: string): Promise<any> {
