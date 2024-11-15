@@ -28,7 +28,7 @@ import { ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const isProduction =
-          configService.get<string>('NODE_ENV') === 'production';
+          configService.get<string>('NODE_ENV') === 'development';
         const redisOptions = {
           host: 'localhost',
           port: 6379,
@@ -40,7 +40,7 @@ import { ConfigService } from '@nestjs/config';
                 'REDIS_PASSWORD',
               )}@${configService.get<string>(
                 'REDIS_HOST',
-              )}:${configService.get<string>('REDIS_PORT')}`
+              )}:${configService.get<number>('REDIS_PORT')}`
             : redisOptions,
         };
       },

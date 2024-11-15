@@ -16,6 +16,7 @@ import { SubscriptionRepository } from '../subscription/interfaces';
 import { subscriptionRepository } from 'src/infrastructure/repositories/subscription.repository';
 import { SubscriptionService } from '../subscription/services';
 import { CronService } from './services/cron.service';
+import { RedisTestService } from './services/edis-test.service';
 
 @Module({
   imports: [
@@ -31,8 +32,9 @@ import { CronService } from './services/cron.service';
     PrismaService,
     NotificationUseCase,
     NotificationMapper,
-    NotificationProcessor,
     CronService,
+    RedisTestService,
+    NotificationProcessor,
     Logger,
     {
       provide: NotificationRepository,
