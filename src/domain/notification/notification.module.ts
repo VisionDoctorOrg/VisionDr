@@ -15,8 +15,7 @@ import { NotificationProcessor } from './services/notification.processor';
 import { SubscriptionRepository } from '../subscription/interfaces';
 import { subscriptionRepository } from 'src/infrastructure/repositories/subscription.repository';
 import { SubscriptionService } from '../subscription/services';
-import { HttpModule } from '@nestjs/axios';
-
+import { CronService } from './services/cron.service';
 
 @Module({
   imports: [
@@ -33,10 +32,11 @@ import { HttpModule } from '@nestjs/axios';
     NotificationUseCase,
     NotificationMapper,
     NotificationProcessor,
+    CronService,
     Logger,
     {
       provide: NotificationRepository,
-      useClass: notificationRepository,    
+      useClass: notificationRepository,
     },
     {
       provide: SubscriptionRepository,
