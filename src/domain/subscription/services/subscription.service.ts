@@ -25,9 +25,10 @@ export class SubscriptionService {
   constructor(
     @Inject(SubscriptionRepository)
     private readonly subscriptionRepository: SubscriptionRepository,
-    private readonly httpService: HttpService,
+    
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
+    private readonly httpService: HttpService,
   ) {
     this.baseUrl = this.configService.get<string>('PAYSTACK_BASEURL');
     this.secretKey = this.configService.get<string>('PAYSTACK_SECRETKEY');
@@ -265,6 +266,14 @@ export class SubscriptionService {
       return { message: 'Subscription cancelled successfully' };
     } catch (error) {
       this.logger.error('Error cancelling subscription:', error.message);
+      throw error;
+    }
+  }
+
+  async getSubscriptionsDueSoon(userId: string): Promise<Subscription[]> { 
+    try {
+      return await this.subscriptionRepository.getSubscriptionsDueSoon(userId);
+    } catch (error) {
       throw error;
     }
   }

@@ -30,11 +30,12 @@ import { HttpModule, HttpService } from '@nestjs/axios';
     SubscriptionUseCase,
     SubscriptionMapper,
     Logger,
+   
     {
       provide: SubscriptionRepository,
       useClass: subscriptionRepository,
     },
   ],
-  //exports: [HttpService],
+  exports: [HttpModule],
 })
 export class SubscriptionModule {}

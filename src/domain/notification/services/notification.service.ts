@@ -278,4 +278,12 @@ export class NotificationService {
       );
     }
   }
+
+  async getUpcomingMedications(userId: string): Promise<MedicationReminder[]> { 
+    try {
+      return await this.notificationRepository.getUpcomingMedications(userId);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
