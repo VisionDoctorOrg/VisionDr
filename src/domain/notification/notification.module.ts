@@ -10,8 +10,14 @@ import {
   NotificationUseCase,
 } from 'src/application/notification';
 import { notificationRepository } from 'src/infrastructure/repositories/notification.repository';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'notifications',
+    }),
+  ],
   controllers: [NotificationController],
   providers: [
     NotificationService,
@@ -24,5 +30,6 @@ import { notificationRepository } from 'src/infrastructure/repositories/notifica
       useClass: notificationRepository,
     },
   ],
+  exports: [BullModule],
 })
 export class NotificationModule {}

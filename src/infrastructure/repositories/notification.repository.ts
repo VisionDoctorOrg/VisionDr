@@ -300,4 +300,24 @@ export class notificationRepository implements NotificationRepository {
 
     return localDate;
   }
+
+
+async getUpcomingMedications(userId: string): Promise<MedicationReminder[]> {
+  const currentTime = new Date();
+  const upcomingTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Next 10 minutes
+
+  return this.repository.medicationReminder.findMany({
+    where: {
+      userId,
+      reminderTimes: {
+        some: {
+          time: { lte: upcomingTime },
+          completed: false,
+        },
+      },
+    },
+    include: { reminderTimes: true },
+  });
+}
+
 }

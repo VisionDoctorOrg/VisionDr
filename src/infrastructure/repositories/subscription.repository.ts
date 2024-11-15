@@ -161,4 +161,17 @@ export class subscriptionRepository implements SubscriptionRepository {
       throw error;
     }
   }
+
+ public async getSubscriptionsDueSoon(userId: string): Promise<Subscription[]> {
+    const currentTime = new Date();
+    const upcomingTime = new Date(currentTime.getTime() + 24 * 60 * 60 * 1000); // Next 24 hours
+
+    return this.repository.subscription.findMany({
+      where: {
+        userId,
+        nextPaymentDate: { lte: upcomingTime },
+        status: 'active',
+      },
+    });
+  }
 }
