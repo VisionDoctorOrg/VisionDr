@@ -279,11 +279,29 @@ export class NotificationService {
     }
   }
 
-  async getUpcomingMedications(userId: string): Promise<MedicationReminder[]> { 
-    try {
-      return await this.notificationRepository.getUpcomingMedications(userId);
-    } catch (error) {
-      throw error;
-    }
+  async getUsersWithUpcomingMedications(): Promise<
+    { userId: string; reminders: any[] }[]
+  > {
+    const upcomingReminders =
+      await this.notificationRepository.getRemindersDueSoon();
+    console.log(upcomingReminders);
+
+    // Group reminders by user
+    const remindersByUser = upcomingReminders.reduce(
+      (result, reminder) => {
+        if (!result[reminder.userId]) {
+          result[reminder.userId] = [];
+        }
+        result[reminder.userId].push(reminder);
+        return result;
+      },
+      {} as Record<string, any[]>,
+    );
+
+    // Map grouped reminders into an array
+    return Object.entries(remindersByUser).map(([userId, reminders]) => ({
+      userId,
+      reminders,
+    }));
   }
 }

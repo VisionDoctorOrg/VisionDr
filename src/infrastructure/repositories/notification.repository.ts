@@ -9,7 +9,6 @@ import {
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from 'src/application/notification/dtos/medication-reminder.dto';
 
-
 @Injectable()
 export class notificationRepository implements NotificationRepository {
   constructor(private readonly repository: PrismaService) {}
@@ -301,23 +300,76 @@ export class notificationRepository implements NotificationRepository {
     return localDate;
   }
 
+  // async getRemindersDueSoon(): Promise<MedicationReminder[]> {
+  //   const currentTimes = new Date();
+  //   const upcomingTime = new Date(currentTimes.getTime() + 5 * 60 * 1000);
+  //   console.log(currentTimes, upcomingTime);
+  //   const currentTime = new Date();
+  //   console.log('Local Time:', currentTime.toLocaleString());
+  //   console.log('UTC Time:', currentTime.toISOString());
 
-async getUpcomingMedications(userId: string): Promise<MedicationReminder[]> {
-  const currentTime = new Date();
-  const upcomingTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Next 10 minutes
+  //   return this.repository.medicationReminder.findMany({
+  //     where: {
+  //       reminderTimes: {
+  //         some: {
+  //           time: { gte: currentTime, lte: upcomingTime },
+  //           completed: false,
+  //         },
+  //       },
+  //     },
+  //     include: {
+  //       reminderTimes: {
+  //         where: {
+  //           time: { gte: currentTime, lte: upcomingTime },
+  //           completed: false,
+  //         },
+  //         orderBy: {
+  //           time: 'asc',
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
 
-  return this.repository.medicationReminder.findMany({
-    where: {
-      userId,
-      reminderTimes: {
-        some: {
-          time: { lte: upcomingTime },
-          completed: false,
+  async getRemindersDueSoon(): Promise<MedicationReminder[]> {
+    const currentTime = new Date(); // Current time in UTC
+    const notificationTime = new Date(currentTime.getTime() + 30 * 60 * 1000); // 30 mins ahead
+    const upcomingTime = new Date(notificationTime.getTime() + 5 * 60 * 1000); // 5 mins after notification
+
+    // Clean logging
+    console.log('currentTime (UTC):', currentTime.toISOString());
+    console.log(
+      'notificationTime (UTC, 30 mins ahead):',
+      notificationTime.toISOString(),
+    );
+    console.log(
+      'upcomingTime (UTC, 5 mins later):',
+      upcomingTime.toISOString(),
+    );
+
+    console.log('currentTime (Local):', currentTime.toLocaleTimeString()); // Local time representation
+
+    // Query the reminders
+    return this.repository.medicationReminder.findMany({
+      where: {
+        reminderTimes: {
+          some: {
+            time: { gte: currentTime, lte: upcomingTime }, // Between current and upcoming time
+            completed: false, // Not completed
+          },
         },
       },
-    },
-    include: { reminderTimes: true },
-  });
-}
-
+      include: {
+        reminderTimes: {
+          where: {
+            time: { gte: currentTime, lte: upcomingTime },
+            completed: false,
+          },
+          orderBy: {
+            time: 'asc',
+          },
+        },
+      },
+    });
+  }
 }

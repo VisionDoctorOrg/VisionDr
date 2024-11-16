@@ -5,12 +5,14 @@ import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class CronService {
   private readonly logger = new Logger(CronService.name);
   constructor(
     @InjectQueue('reminderQueue') private readonly reminderQueue: Queue,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async getQueueStatus() {
@@ -29,24 +31,32 @@ export class CronService {
     };
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_MINUTE)
   async triggerMedicationReminderCheck() {
-    console.log(await this.getQueueStatus());
-    this.logger.verbose(`Checking for medication reminder...`);
+    this.logger.verbose(`Running medication reminder cron job...`);
 
-    const queue = await this.reminderQueue.add('scheduleMedicationReminders', {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        delay: 2000,
-      },
-      removeOnComplete: true,
-      removeOnFail: true,
-    });
+    // Fetch users with upcoming reminders
+    const usersWithReminders =
+      await this.notificationService.getUsersWithUpcomingMedications();
 
-    this.logger.log(
-      `Successfully added forgotPassword email to queue with id ${queue.id}`,
-    );
+    for (const user of usersWithReminders) {
+      const queue = await this.reminderQueue.add(
+        'scheduleMedicationReminders',
+        { userId: user.userId, reminders: user.reminders },
+        {
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 2000,
+          },
+          removeOnComplete: true,
+          removeOnFail: true,
+        },
+      );
+      this.logger.log(
+        `Successfully added scheduleMedicationReminders to queue with id ${queue.id} for userId ${user.userId}`,
+      );
+    }
   }
 
   @Cron('0 0 * * *') // Once a day at midnight
