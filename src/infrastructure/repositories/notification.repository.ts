@@ -332,30 +332,27 @@ export class notificationRepository implements NotificationRepository {
   // }
 
   async getRemindersDueSoon(): Promise<MedicationReminder[]> {
-    const currentTime = new Date(); // Current time in UTC
-    const notificationTime = new Date(currentTime.getTime() + 30 * 60 * 1000); // 30 mins ahead
-    const upcomingTime = new Date(notificationTime.getTime() + 5 * 60 * 1000); // 5 mins after notification
+    // Adjust time based on offset if needed
+    const localOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in milliseconds
+    const currentTime = new Date(Date.now() - localOffset); // Adjusted for local timezone
+    const upcomingTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // 5 mins after notification
 
-    // Clean logging
-    console.log('currentTime (UTC):', currentTime.toISOString());
-    console.log(
-      'notificationTime (UTC, 30 mins ahead):',
-      notificationTime.toISOString(),
-    );
-    console.log(
-      'upcomingTime (UTC, 5 mins later):',
-      upcomingTime.toISOString(),
-    );
-
-    console.log('currentTime (Local):', currentTime.toLocaleTimeString()); // Local time representation
+    // Debug logging
+    console.log({
+      localOffset: localOffset,
+      currentTime: currentTime.toISOString(),
+      upcomingTime: upcomingTime.toISOString(),
+      explanation: `Finding reminders due between ${currentTime.toLocaleTimeString()} and ${upcomingTime.toLocaleTimeString()}`,
+    });
 
     // Query the reminders
     return this.repository.medicationReminder.findMany({
       where: {
         reminderTimes: {
           some: {
-            time: { gte: currentTime, lte: upcomingTime }, // Between current and upcoming time
-            completed: false, // Not completed
+            time: { gte: currentTime, lte: upcomingTime },
+            completed: false,
+            notified: false,
           },
         },
       },
@@ -364,6 +361,7 @@ export class notificationRepository implements NotificationRepository {
           where: {
             time: { gte: currentTime, lte: upcomingTime },
             completed: false,
+            notified: false,
           },
           orderBy: {
             time: 'asc',
@@ -372,4 +370,47 @@ export class notificationRepository implements NotificationRepository {
       },
     });
   }
+
+  // async getRemindersDueSoon(): Promise<MedicationReminder[]> {
+  //   let currentTime = new Date(); // Current time in UTC
+  //   currentTime.toLocaleTimeString();
+  //   const notificationTime = new Date(currentTime.getTime() + 30 * 60 * 1000); // 30 mins ahead
+  //   const upcomingTime = new Date(notificationTime.getTime() + 5 * 60 * 1000); // 5 mins after notification
+
+  //   // Clean logging
+  //   console.log('currentTime (UTC):', currentTime);
+  //   console.log(
+  //     'notificationTime (UTC, 30 mins ahead):',
+  //     notificationTime.toISOString(),
+  //   );
+  //   console.log(
+  //     'upcomingTime (UTC, 5 mins later):',
+  //     upcomingTime.toISOString(),
+  //   );
+
+  //   console.log('currentTime (Local):', currentTime.toLocaleTimeString()); // Local time representation
+
+  //   // Query the reminders
+  //   return this.repository.medicationReminder.findMany({
+  //     where: {
+  //       reminderTimes: {
+  //         some: {
+  //           time: { gte: currentTime, lte: upcomingTime }, // Between current and upcoming time
+  //           completed: false,
+  //         },
+  //       },
+  //     },
+  //     include: {
+  //       reminderTimes: {
+  //         where: {
+  //           time: { gte: currentTime, lte: upcomingTime },
+  //           completed: false,
+  //         },
+  //         orderBy: {
+  //           time: 'asc',
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
 }

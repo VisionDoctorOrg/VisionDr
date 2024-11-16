@@ -5,6 +5,7 @@ import { NotificationRepository } from '../interfaces';
 import { Inject, Logger } from '@nestjs/common';
 import { SubscriptionService } from 'src/domain/subscription/services';
 import { NotificationService } from './notification.service';
+import { error } from 'console';
 
 @Processor('reminderQueue')
 export class NotificationProcessor {
@@ -13,6 +14,36 @@ export class NotificationProcessor {
     @Inject(NotificationRepository)
     private readonly subscriptionService: SubscriptionService,
   ) {}
+
+  // @Process('scheduleMedicationReminders')
+  // async scheduleMedicationReminders(job: Job) {
+  //   const { userId, reminders } = job.data;
+
+  //   this.logger.log(
+  //     `Processing scheduleMedicationReminders for userId ${userId}...`,
+  //   );
+
+  //   for (const reminder of reminders) {
+  //     console.log('reminder:', reminder);
+  //     for (const reminderTime of reminder.reminderTimes) {
+  //       console.log('reminderTime:', reminderTime);
+  //       const timeDiff = reminderTime.time.getTime() - Date.now();
+  //       console.log('timeDiff:', timeDiff);
+  //       if (timeDiff > 0) {
+  //         // Schedule the individual reminder job 5 minutes before the actual time
+  //         await job.queue.add(
+  //           'medicationReminder',
+  //           {
+  //             userId: reminder.userId,
+  //             medicationName: reminder.medicationName,
+  //             reminderTime: reminderTime.time,
+  //           },
+  //           { delay: timeDiff - 5 * 60 * 1000 }, // Schedule 5 minutes early.
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
 
   @Process('scheduleMedicationReminders')
   async scheduleMedicationReminders(job: Job) {
@@ -23,21 +54,29 @@ export class NotificationProcessor {
     );
 
     for (const reminder of reminders) {
-      console.log('reminder:', reminder);
       for (const reminderTime of reminder.reminderTimes) {
-        console.log('reminderTime:', reminderTime);
-        const timeDiff = reminderTime.time.getTime() - Date.now();
-        console.log('timeDiff:', timeDiff);
-        if (timeDiff > 0) {
-          // Schedule the individual reminder job 5 minutes before the actual time
+        console.log(reminderTime);
+        const reminderDateTime = new Date(reminderTime.time);
+        const notificationTime = new Date(
+          reminderDateTime.getTime() - 5 * 60 * 1000,
+        );
+        const now = new Date();
+        console.log('reminderDateTime:', reminderDateTime);
+        console.log('notificationTime:', notificationTime);
+        console.log('now:', now);
+        // Only schedule if notification time is in the future
+
+        if (notificationTime > now) {
           await job.queue.add(
             'medicationReminder',
             {
               userId: reminder.userId,
               medicationName: reminder.medicationName,
-              reminderTime: reminderTime.time,
+              reminderTime: reminderDateTime,
             },
-            { delay: timeDiff - 5 * 60 * 1000 }, // Schedule 5 minutes early.
+            {
+              delay: notificationTime.getTime() - now.getTime(),
+            },
           );
         }
       }

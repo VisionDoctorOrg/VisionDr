@@ -39,6 +39,7 @@ model User {
 
   subscriptions      Subscription[]
   medicationReminder MedicationReminder[]
+  Notifications      Notification[]
 
   imageId String? @db.ObjectId
   image   Image?  @relation(fields: [imageId], references: [id])
@@ -168,14 +169,39 @@ model MedicationReminder {
 }
 
 model ReminderTime {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  medicationId String   @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  medicationId String         @db.ObjectId
   time         DateTime
   day          Int
-  completed    Boolean  @default(false)
-  progress     Float    @default(0)
+  completed    Boolean        @default(false)
+  progress     Float          @default(0)
+  notified     Boolean        @default(false)
+  notification Notification[]
 
   medicationReminder MedicationReminder @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  read           Boolean?      @default(false)
+  type           String?
+  delivered      Boolean?      @default(false)
+  dispatched     Boolean?      @default(false)
+  userId         String?       @db.ObjectId
+  reminderId     String?       @db.ObjectId
+  createdAt      DateTime?     @default(now())
+  updatedAt      DateTime?     @updatedAt
+  stockRequestId Int?
+  taskId         Int?
+  message        Json?
+  loanRequestId  Int?
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminder       ReminderTime? @relation(fields: [reminderId], references: [id], onDelete: Cascade)
+
+  @@index([dispatched])
+  @@index([delivered])
+  @@index([read])
+  @@index([userId])
 }
 
 model Image {

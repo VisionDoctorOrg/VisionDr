@@ -284,7 +284,7 @@ export class NotificationService {
   > {
     const upcomingReminders =
       await this.notificationRepository.getRemindersDueSoon();
-    console.log(upcomingReminders);
+    //console.log('upcomingReminders:', upcomingReminders);
 
     // Group reminders by user
     const remindersByUser = upcomingReminders.reduce(
