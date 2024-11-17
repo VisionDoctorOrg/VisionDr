@@ -371,6 +371,20 @@ export class notificationRepository implements NotificationRepository {
     });
   }
 
+  async updateReminderNotification(
+    reminderTimeId: string,
+    notified: boolean,
+  ): Promise<ReminderTime> {
+    try {
+      return await this.repository.reminderTime.update({
+        where: { id: reminderTimeId },
+        data: { notified },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // async getRemindersDueSoon(): Promise<MedicationReminder[]> {
   //   let currentTime = new Date(); // Current time in UTC
   //   currentTime.toLocaleTimeString();

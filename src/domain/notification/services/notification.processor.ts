@@ -13,6 +13,7 @@ export class NotificationProcessor {
   constructor(
     @Inject(NotificationRepository)
     private readonly subscriptionService: SubscriptionService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   // @Process('scheduleMedicationReminders')
@@ -56,16 +57,24 @@ export class NotificationProcessor {
     for (const reminder of reminders) {
       for (const reminderTime of reminder.reminderTimes) {
         console.log(reminderTime);
+
+        // Offset in milliseconds
+        const localOffset = new Date().getTimezoneOffset() * 60 * 1000;
+
+        // Stored time in UTC
         const reminderDateTime = new Date(reminderTime.time);
+
+        // 5 mins before
         const notificationTime = new Date(
           reminderDateTime.getTime() - 5 * 60 * 1000,
         );
-        const now = new Date();
-        console.log('reminderDateTime:', reminderDateTime);
-        console.log('notificationTime:', notificationTime);
-        console.log('now:', now);
-        // Only schedule if notification time is in the future
+        const now = new Date(Date.now() - localOffset);
 
+        console.log('reminderDateTime (UTC):', reminderDateTime);
+        console.log('notificationTime (UTC):', notificationTime);
+        console.log('now (UTC):', now);
+
+        // Ensure consistent comparison
         if (notificationTime > now) {
           await job.queue.add(
             'medicationReminder',
@@ -75,13 +84,51 @@ export class NotificationProcessor {
               reminderTime: reminderDateTime,
             },
             {
-              delay: notificationTime.getTime() - now.getTime(),
+              delay: notificationTime.getTime() - now.getTime(), // Calculate delay
             },
           );
         }
       }
     }
   }
+
+  // @Process('scheduleMedicationReminders')
+  // async scheduleMedicationReminders(job: Job) {
+  //   const { userId, reminders } = job.data;
+
+  //   this.logger.log(
+  //     `Processing scheduleMedicationReminders for userId ${userId}...`,
+  //   );
+
+  //   for (const reminder of reminders) {
+  //     for (const reminderTime of reminder.reminderTimes) {
+  //       console.log(reminderTime);
+  //       const reminderDateTime = new Date(reminderTime.time);
+  //       const notificationTime = new Date(
+  //         reminderDateTime.getTime() - 5 * 60 * 1000,
+  //       );
+  //       const now = new Date();
+  //       console.log('reminderDateTime:', reminderDateTime);
+  //       console.log('notificationTime:', notificationTime);
+  //       console.log('now:', now);
+  //       // Only schedule if notification time is in the future
+
+  //       if (notificationTime > now) {
+  //         await job.queue.add(
+  //           'medicationReminder',
+  //           {
+  //             userId: reminder.userId,
+  //             medicationName: reminder.medicationName,
+  //             reminderTime: reminderDateTime,
+  //           },
+  //           {
+  //             delay: notificationTime.getTime() - now.getTime(),
+  //           },
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
 
   @Process('medicationReminder')
   async medicationReminder(job: Job) {
@@ -97,6 +144,13 @@ export class NotificationProcessor {
     //   medicationName,
     //   reminderTime,
     // );
+
+    // Update the reminder as notified in the database
+    await this.notificationService.updateReminderNotification(
+      userId,
+      medicationName,
+      true,
+    );
   }
 
   @Process('schedulePaymentReminders')

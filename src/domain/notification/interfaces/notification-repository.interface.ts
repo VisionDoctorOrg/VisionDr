@@ -22,6 +22,10 @@ export interface NotificationRepository
     reminderId: string,
     progress: number,
   ): Promise<MedicationReminder>;
+  updateReminderNotification(
+    reminderId: string,
+    notified: boolean,
+  ): Promise<MedicationReminder>;
   getRemindersForToday(
     userId: string,
     date: string,
