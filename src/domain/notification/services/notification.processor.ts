@@ -80,8 +80,9 @@ export class NotificationProcessor {
             'medicationReminder',
             {
               userId: reminder.userId,
-              medicationName: reminder.medicationName,
-              reminderTime: reminderDateTime,
+              reminderId: reminderTime.id,
+              reminderTime: reminderTime.time,
+              notified: true,
             },
             {
               delay: notificationTime.getTime() - now.getTime(), // Calculate delay
@@ -132,12 +133,12 @@ export class NotificationProcessor {
 
   @Process('medicationReminder')
   async medicationReminder(job: Job) {
-    const { userId, medicationName, reminderTime } = job.data;
-
+    const { userId, reminderId, notified, reminderTime } = job.data;
+    console.log(userId, reminderId, notified, reminderTime);
     this.logger.log(
-      `Sending medication reminder for userId ${userId} for ${medicationName} at ${reminderTime}`,
+      `Sending medication reminder for userId ${userId} for reminderId ${reminderId} at ${reminderTime}`,
     );
-    console.log(userId, medicationName, reminderTime);
+    console.log(userId, notified, reminderTime, reminderId);
     // Send notification (email, SMS, etc.)
     // await this.notificationService.sendMedicationReminder(
     //   userId,
@@ -148,8 +149,8 @@ export class NotificationProcessor {
     // Update the reminder as notified in the database
     await this.notificationService.updateReminderNotification(
       userId,
-      medicationName,
-      true,
+      reminderId,
+      notified,
     );
   }
 

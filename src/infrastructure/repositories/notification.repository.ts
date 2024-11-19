@@ -342,7 +342,7 @@ export class notificationRepository implements NotificationRepository {
       localOffset: localOffset,
       currentTime: currentTime.toISOString(),
       upcomingTime: upcomingTime.toISOString(),
-      explanation: `Finding reminders due between ${currentTime.toLocaleTimeString()} and ${upcomingTime.toLocaleTimeString()}`,
+      explanation: `Finding reminders due between ${currentTime} and ${upcomingTime.toLocaleTimeString()}`,
     });
 
     // Query the reminders
