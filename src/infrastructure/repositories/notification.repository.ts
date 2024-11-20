@@ -335,7 +335,7 @@ export class notificationRepository implements NotificationRepository {
     // Adjust time based on offset if needed
     const localOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in milliseconds
     const currentTime = new Date(Date.now() - localOffset); // Adjusted for local timezone
-    const upcomingTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // 5 mins after notification
+    const upcomingTime = new Date(currentTime.getTime() + 10 * 60 * 1000);
 
     // Debug logging
     console.log({
