@@ -300,37 +300,6 @@ export class notificationRepository implements NotificationRepository {
     return localDate;
   }
 
-  // async getRemindersDueSoon(): Promise<MedicationReminder[]> {
-  //   const currentTimes = new Date();
-  //   const upcomingTime = new Date(currentTimes.getTime() + 5 * 60 * 1000);
-  //   console.log(currentTimes, upcomingTime);
-  //   const currentTime = new Date();
-  //   console.log('Local Time:', currentTime.toLocaleString());
-  //   console.log('UTC Time:', currentTime.toISOString());
-
-  //   return this.repository.medicationReminder.findMany({
-  //     where: {
-  //       reminderTimes: {
-  //         some: {
-  //           time: { gte: currentTime, lte: upcomingTime },
-  //           completed: false,
-  //         },
-  //       },
-  //     },
-  //     include: {
-  //       reminderTimes: {
-  //         where: {
-  //           time: { gte: currentTime, lte: upcomingTime },
-  //           completed: false,
-  //         },
-  //         orderBy: {
-  //           time: 'asc',
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
   async getRemindersDueSoon(): Promise<MedicationReminder[]> {
     // Adjust time based on offset if needed
     const localOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in milliseconds
