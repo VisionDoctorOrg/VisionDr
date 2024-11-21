@@ -16,36 +16,6 @@ export class NotificationProcessor {
     private readonly notificationService: NotificationService,
   ) {}
 
-  // @Process('scheduleMedicationReminders')
-  // async scheduleMedicationReminders(job: Job) {
-  //   const { userId, reminders } = job.data;
-
-  //   this.logger.log(
-  //     `Processing scheduleMedicationReminders for userId ${userId}...`,
-  //   );
-
-  //   for (const reminder of reminders) {
-  //     console.log('reminder:', reminder);
-  //     for (const reminderTime of reminder.reminderTimes) {
-  //       console.log('reminderTime:', reminderTime);
-  //       const timeDiff = reminderTime.time.getTime() - Date.now();
-  //       console.log('timeDiff:', timeDiff);
-  //       if (timeDiff > 0) {
-  //         // Schedule the individual reminder job 5 minutes before the actual time
-  //         await job.queue.add(
-  //           'medicationReminder',
-  //           {
-  //             userId: reminder.userId,
-  //             medicationName: reminder.medicationName,
-  //             reminderTime: reminderTime.time,
-  //           },
-  //           { delay: timeDiff - 5 * 60 * 1000 }, // Schedule 5 minutes early.
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
-
   @Process('scheduleMedicationReminders')
   async scheduleMedicationReminders(job: Job) {
     const { userId, reminders } = job.data;
