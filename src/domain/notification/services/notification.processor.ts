@@ -63,44 +63,6 @@ export class NotificationProcessor {
     }
   }
 
-  // @Process('scheduleMedicationReminders')
-  // async scheduleMedicationReminders(job: Job) {
-  //   const { userId, reminders } = job.data;
-
-  //   this.logger.log(
-  //     `Processing scheduleMedicationReminders for userId ${userId}...`,
-  //   );
-
-  //   for (const reminder of reminders) {
-  //     for (const reminderTime of reminder.reminderTimes) {
-  //       console.log(reminderTime);
-  //       const reminderDateTime = new Date(reminderTime.time);
-  //       const notificationTime = new Date(
-  //         reminderDateTime.getTime() - 5 * 60 * 1000,
-  //       );
-  //       const now = new Date();
-  //       console.log('reminderDateTime:', reminderDateTime);
-  //       console.log('notificationTime:', notificationTime);
-  //       console.log('now:', now);
-  //       // Only schedule if notification time is in the future
-
-  //       if (notificationTime > now) {
-  //         await job.queue.add(
-  //           'medicationReminder',
-  //           {
-  //             userId: reminder.userId,
-  //             medicationName: reminder.medicationName,
-  //             reminderTime: reminderDateTime,
-  //           },
-  //           {
-  //             delay: notificationTime.getTime() - now.getTime(),
-  //           },
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
-
   @Process('medicationReminder')
   async medicationReminder(job: Job) {
     const { userId, reminderId, notified, reminderTime } = job.data;
