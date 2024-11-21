@@ -1,5 +1,3 @@
-// cron.service.ts
-
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
