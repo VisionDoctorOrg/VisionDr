@@ -27,6 +27,7 @@ import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, response } from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,6 +37,7 @@ export class AuthController {
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
     private readonly signupUseCase: SignupUseCase,
     private readonly loginUseCase: LoginUseCase,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('signup')
@@ -162,19 +164,14 @@ export class AuthController {
       const response = await this.loginUseCase.execute(req.user);
       const appToken = response.accessToken;
 
-      // return {
-      //   status: true,
-      //   message: 'Successfully authenticated',
-      //   data: { ...response },
-      // };
-      console.log(appToken);
-      res.cookie('accessToken', appToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'Strict',
-      });
-      //res.redirect(`https://visiondoctors.africa/app/dashboard`);
-      res.redirect('https://visiondoctors.africa/app/dashboard');
+      // res.cookie('accessToken', appToken, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: 'Strict',
+      // });
+      res.redirect(
+        `${this.configService.get<string>('FRONT_URL')}/app/dashboard?token=${appToken}`,
+      );
     } else {
       return res.redirect('/login');
     }
