@@ -21,4 +21,14 @@ export class LoginUseCase {
 
     return loginResponse;
   }
+
+  async activate(data: User): Promise<void> {
+    const user = await this.authService.findByEmail(data.email);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    user.activated = Status.Active;
+    await this.authService.updateUser(user);
+  }
 }

@@ -161,6 +161,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
+      await this.loginUseCase.activate(req.user);
       const response = await this.loginUseCase.execute(req.user);
       const appToken = response.accessToken;
 
