@@ -11,4 +11,7 @@ export interface SubscriptionRepository extends IRepository<Subscription> {
     nextPaymentDate: Date,
   ): Promise<Subscription>;
   upsertSubscription(userId: string, event: any): Promise<Subscription>;
+  getSubscriptionsDueSoon(
+    userId: string,
+  ): Promise<Subscription[]>;
 }

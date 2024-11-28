@@ -9,11 +9,11 @@ export class NotificationMapper {
     notificationPreferenceDto: NotificationPreferenceDto,
   ): NotificationPreference {
     return {
-      email: notificationPreferenceDto.email,
-      whatsapp: notificationPreferenceDto.whatsapp,
+      emailEnabled: notificationPreferenceDto.emailEnabled,
+      whatsappEnabled: notificationPreferenceDto.whatsappEnabled,
       paymentReminder: notificationPreferenceDto.paymentReminder,
       medicationReminder: notificationPreferenceDto.medicationReminder,
-      sms: notificationPreferenceDto.sms,
+      smsEnabled: notificationPreferenceDto.smsEnabled,
     };
   }
 
@@ -22,9 +22,9 @@ export class NotificationMapper {
   ): NotificationPreference {
     return {
       id: preference.id,
-      email: preference.email,
-      whatsapp: preference.whatsapp,
-      sms: preference.sms,
+      emailEnabled: preference.emailEnabled,
+      whatsappEnabled: preference.whatsappEnabled,
+      smsEnabled: preference.smsEnabled,
       paymentReminder: preference.paymentReminder,
       medicationReminder: preference.medicationReminder,
       userId: preference.userId,

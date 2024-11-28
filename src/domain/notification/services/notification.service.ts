@@ -26,9 +26,9 @@ export class NotificationService {
     try {
       return await this.notificationRepository.create(
         {
-          email: notificationPreference.email,
-          sms: notificationPreference.sms,
-          whatsapp: notificationPreference.whatsapp,
+          emailEnabled: notificationPreference.emailEnabled,
+          smsEnabled: notificationPreference.smsEnabled,
+          whatsappEnabled: notificationPreference.whatsappEnabled,
           paymentReminder: notificationPreference.paymentReminder,
           medicationReminder: notificationPreference.medicationReminder,
         },
@@ -150,68 +150,32 @@ export class NotificationService {
     }
   }
 
-  // public async updateReminderTimeStatus(
-  //   userId: string,
-  //   reminderTimeId: string,
-  //   completed: boolean,
-  // ): Promise<ReminderTime> {
-  //   try {
-  //     const existingReminderTime =
-  //       await this.notificationRepository.findReminderTimeById(
-  //         reminderTimeId,
-  //         userId,
-  //       );
-  //     if (!existingReminderTime) {
-  //       throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
-  //     }
-  //     const updatedReminderTime =
-  //       await this.notificationRepository.updateReminderTime(
-  //         reminderTimeId,
-  //         completed,
-  //       );
+  public async updateReminderNotification(
+    userId: string,
+    reminderTimeId: string,
+    notified: boolean,
+  ): Promise<ReminderTime> {
+    try {
+      const existingReminderTime =
+        await this.notificationRepository.findReminderTimeById(
+          reminderTimeId,
+          userId,
+        );
+      if (!existingReminderTime) {
+        throw new HttpException('Reminder not found', HttpStatus.NOT_FOUND);
+      }
+      const reminder =
+        await this.notificationRepository.updateReminderNotification(
+          reminderTimeId,
+          notified,
+        );
 
-  //     // Get Parent medication
-  //     const reminder =
-  //       await this.notificationRepository.getMedicationByReminderTimeId(
-  //         reminderTimeId,
-  //       );
-
-  //     console.log(reminder);
-  //     // Recalculate the number of completed reminders
-  //     // Total number of reminders for the specific reminder time
-  //     const totalRemindersForReminderTime = reminder.reminderTimes.length;
-
-  //     // Recalculate the number of completed reminders for this reminder time
-  //     const completedReminders = reminder.reminderTimes.filter(
-  //       (rt) => rt.completed,
-  //     ).length;
-
-  //     // Calculate the progress for this reminder time based on completed reminders
-
-  //     const progress = Number(
-  //       ((completedReminders / totalRemindersForReminderTime) * 100).toFixed(2),
-  //     );
-
-  //     const updatedReminderTimesPromises = reminder.reminderTimes.map(
-  //       async (rt) => {
-  //         console.log(rt);
-  //         return this.notificationRepository.updateReminderTimeProgress(
-  //           rt.id,
-  //           progress,
-  //         );
-  //       },
-  //     );
-
-  //     // Wait for all updates to complete
-  //     await Promise.all(updatedReminderTimesPromises);
-
-  //     // Return the specific reminder time that was updated
-  //     return updatedReminderTime;
-  //   } catch (error) {
-  //     this.logger.error(error);
-  //     throw error;
-  //   }
-  // }
+      return reminder;
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
 
   public async updateReminderTimeStatus(
     userId: string,
@@ -277,5 +241,31 @@ export class NotificationService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getUsersWithUpcomingMedications(): Promise<
+    { userId: string; reminders: any[] }[]
+  > {
+    const upcomingReminders =
+      await this.notificationRepository.getRemindersDueSoon();
+    //console.log('upcomingReminders:', upcomingReminders);
+
+    // Group reminders by user
+    const remindersByUser = upcomingReminders.reduce(
+      (result, reminder) => {
+        if (!result[reminder.userId]) {
+          result[reminder.userId] = [];
+        }
+        result[reminder.userId].push(reminder);
+        return result;
+      },
+      {} as Record<string, any[]>,
+    );
+
+    // Map grouped reminders into an array
+    return Object.entries(remindersByUser).map(([userId, reminders]) => ({
+      userId,
+      reminders,
+    }));
   }
 }

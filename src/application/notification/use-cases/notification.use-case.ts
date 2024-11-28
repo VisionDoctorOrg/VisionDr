@@ -8,8 +8,7 @@ import {
 } from 'src/domain/notification/entities';
 import { MedicationReminderDto } from '../dtos/medication-reminder.dto';
 import { NotificationMapper } from '../mappers';
-// import { ReminderTime } from '@prisma/client';
-//import { MedicationReminderTime } from '@prisma/client';
+
 
 @Injectable()
 export class NotificationUseCase {

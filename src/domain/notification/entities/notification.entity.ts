@@ -1,10 +1,10 @@
 //import { MedicationReminderTime } from '@prisma/client';
 
-export class NotificationPreference {
+export class NotificationPreference { 
   id?: string;
-  email?: boolean;
-  sms?: boolean;
-  whatsapp?: boolean;
+  emailEnabled?: boolean;
+  smsEnabled?: boolean;
+  whatsappEnabled?: boolean;
   medicationReminder?: boolean;
   paymentReminder?: boolean;
   userId?: string;

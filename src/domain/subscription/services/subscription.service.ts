@@ -25,9 +25,10 @@ export class SubscriptionService {
   constructor(
     @Inject(SubscriptionRepository)
     private readonly subscriptionRepository: SubscriptionRepository,
-    private readonly httpService: HttpService,
+
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
+    private readonly httpService: HttpService,
   ) {
     this.baseUrl = this.configService.get<string>('PAYSTACK_BASEURL');
     this.secretKey = this.configService.get<string>('PAYSTACK_SECRETKEY');
@@ -85,59 +86,6 @@ export class SubscriptionService {
       throw new Error('Error initializing subscription');
     }
   }
-
-  // public async initializeSubscription(
-  //   userId: string,
-  //   createSubscriptionDto: CreateSubscriptionDto,
-  // ): Promise<any> {
-  //   try {
-  //     this.logger.debug('Initializing subscription starting...');
-  //     const user = await this.usersService.findUserById(userId);
-
-  //     // Check if the plan is free
-  //     if (createSubscriptionDto.amount === 0) {
-  //       // Directly create a free subscription in the repository without calling Paystack
-  //       const subscriptionData = {
-  //         subscription_code: `free-plan-${userId}`, // Unique code for free subscription
-  //         status: 'active',                         // Set status to active directly
-  //         amount: 0,                                // Free plan has no cost
-  //         plan: createSubscriptionDto.plan,         // Free plan name or ID
-  //         next_payment_date: null,                  // No next payment for free plan
-  //         email_token: null,                        // No token needed for free plan
-  //       };
-
-  //       const freeSubscription = await this.subscriptionRepository.create(
-  //         subscriptionData,
-  //         userId,
-  //       );
-
-  //       this.logger.debug('Free subscription created successfully');
-  //       return freeSubscription;
-  //     }
-
-  //     // If not a free plan, proceed to call Paystack's subscription API
-  //     const url = `${this.baseUrl}/subscription`;
-  //     const headers = { Authorization: `Bearer ${this.secretKey}` };
-  //     const data = {
-  //       customer: user.email,    // The customer's email
-  //       plan: createSubscriptionDto.plan, // The plan ID from Paystack
-  //     };
-
-  //     const response = await firstValueFrom(
-  //       this.httpService.post(url, data, { headers }),
-  //     );
-
-  //     this.logger.debug('Subscription created successfully');
-  //     return response.data;  // Return Paystack's response data
-  //   } catch (error) {
-  //     if (error.response) {
-  //       this.logger.error('Error response data:', error.response.data);
-  //       throw new Error(`Paystack error: ${error.response.data.message}`);
-  //     }
-  //     this.logger.error('Error initializing subscription:', error.message);
-  //     throw new Error('Error initializing subscription');
-  //   }
-  // }
 
   public async subscriptionPlans(): Promise<any> {
     try {
@@ -265,6 +213,14 @@ export class SubscriptionService {
       return { message: 'Subscription cancelled successfully' };
     } catch (error) {
       this.logger.error('Error cancelling subscription:', error.message);
+      throw error;
+    }
+  }
+
+  async getSubscriptionsDueSoon(userId: string): Promise<Subscription[]> {
+    try {
+      return await this.subscriptionRepository.getSubscriptionsDueSoon(userId);
+    } catch (error) {
       throw error;
     }
   }

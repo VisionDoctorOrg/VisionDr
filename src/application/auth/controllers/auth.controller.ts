@@ -27,6 +27,7 @@ import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser, response } from 'src/common';
 import { User } from 'src/domain/users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,6 +37,7 @@ export class AuthController {
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
     private readonly signupUseCase: SignupUseCase,
     private readonly loginUseCase: LoginUseCase,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('signup')
@@ -49,7 +51,7 @@ export class AuthController {
     const user = await this.signupUseCase.execute(signupDto);
     return {
       status: true,
-      message: 'Signup successfully',
+      message: 'Please check your email to activate your account',
       data: { ...user },
     };
   }
@@ -135,11 +137,9 @@ export class AuthController {
     status: HttpStatus.OK,
     description: 'User account activated successfully.',
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid or expired token.',
-  })
-  async activateAccount(@Query('token') token: string): Promise<response> {
+  async activateAccount(
+    @Query('Activation Token') token: string,
+  ): Promise<response> {
     const user = await this.signupUseCase.executeVerification(token);
     return {
       status: true,
@@ -162,21 +162,16 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
       const response = await this.loginUseCase.execute(req.user);
-   const appToken = response.accessToken;
-      
-      // return {
-      //   status: true,
-      //   message: 'Successfully authenticated',
-      //   data: { ...response },
-      // };
-      console.log(appToken)
-      res.cookie('accessToken', appToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'Strict',
-      });
-      //res.redirect(`https://visiondoctors.africa/app/dashboard`);
-      res.redirect('https://visiondoctors.africa/app/dashboard');
+      const appToken = response.accessToken;
+
+      // res.cookie('accessToken', appToken, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: 'Strict',
+      // });
+      res.redirect(
+        `${this.configService.get<string>('FRONT_URL')}/app/dashboard?token=${appToken}`,
+      );
     } else {
       return res.redirect('/login');
     }

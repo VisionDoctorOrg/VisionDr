@@ -169,7 +169,7 @@ export class UsersService {
     }
   }
 
-  async findByEmailOrPhone(
+  async findByEmailOrPhone( 
     email?: string,
     phoneNumber?: string,
   ): Promise<User | null> {
@@ -182,8 +182,10 @@ export class UsersService {
       }
 
       if (email) {
+        
         const user = await this.userRepository.findByEmail(email);
         if (user) {
+       
           return user;
         }
       }

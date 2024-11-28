@@ -10,7 +10,7 @@ import {
   SubscriptionUseCase,
 } from 'src/application/subscription';
 import { subscriptionRepository } from 'src/infrastructure/repositories/subscription.repository';
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({
@@ -30,11 +30,12 @@ import { HttpModule, HttpService } from '@nestjs/axios';
     SubscriptionUseCase,
     SubscriptionMapper,
     Logger,
+
     {
       provide: SubscriptionRepository,
       useClass: subscriptionRepository,
     },
   ],
-  //exports: [HttpService],
+  exports: [HttpModule],
 })
 export class SubscriptionModule {}
