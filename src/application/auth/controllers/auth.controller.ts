@@ -135,7 +135,9 @@ export class AuthController {
     status: HttpStatus.OK,
     description: 'User account activated successfully.',
   })
-  async activateAccount(@Query('Activation Token') token: string): Promise<response> {
+  async activateAccount(
+    @Query('Activation Token') token: string,
+  ): Promise<response> {
     const user = await this.signupUseCase.executeVerification(token);
     return {
       status: true,
@@ -158,7 +160,7 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
       const response = await this.loginUseCase.execute(req.user);
-
+      console.log(response);
       return {
         status: true,
         message: 'Successfully authenticated',
