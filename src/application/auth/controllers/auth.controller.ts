@@ -169,7 +169,8 @@ export class AuthController {
       //   message: 'Successfully authenticated',
       //   data: { ...response },
       // };
-      res.cookie('authToken', appToken, {
+      console.log(appToken)
+      res.cookie('accessToken', appToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'Strict',
