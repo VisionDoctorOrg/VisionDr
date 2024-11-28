@@ -162,14 +162,20 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
       const response = await this.loginUseCase.execute(req.user);
-console.log(response);
-      return {
-        status: true,
-        message: 'Successfully authenticated',
-        data: { ...response },
-      };
-
-      // res.redirect('https://visiondoctors.africa/app/dashboard');
+console.log(response.accessToken);
+      
+      // return {
+      //   status: true,
+      //   message: 'Successfully authenticated',
+      //   data: { ...response },
+      // };
+      res.cookie('authToken', appToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+      });
+      //res.redirect(`https://visiondoctors.africa/app/dashboard`);
+      res.redirect('https://visiondoctors.africa/app/dashboard');
     } else {
       return res.redirect('/login');
     }
