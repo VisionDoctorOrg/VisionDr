@@ -29,7 +29,7 @@ export class CronService {
     };
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  //@Cron(CronExpression.EVERY_MINUTE)
   async triggerMedicationReminderCheck() {
     this.logger.verbose(`Running medication reminder cron job...`);
 
@@ -57,7 +57,7 @@ export class CronService {
     }
   }
 
-  @Cron('0 0 * * *') // Once a day at midnight
+  // @Cron('0 0 * * *') // Once a day at midnight
   async triggerPaymentReminderCheck() {
     await this.reminderQueue.add('schedulePaymentReminders', {});
   }
