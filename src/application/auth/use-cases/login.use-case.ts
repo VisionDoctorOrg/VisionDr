@@ -41,11 +41,14 @@ export class LoginUseCase {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
-    // Automatically create a free subscription plan for the new user
-    await this.subscriptionService.initializeSubscription(user.id, {
-      amount: 0,
-      plan: 'free-plan-id',
-    });
+    console.log('user.subscriptions:', user.subscriptions);
+    if (!user.subscriptions) {
+      console.log('Not found creating subscription:');
+      // Automatically create a free subscription plan for the new user
+      await this.subscriptionService.initializeSubscription(user.id, {
+        amount: 0,
+        plan: 'free-plan-id',
+      });
+    }
   }
 }
