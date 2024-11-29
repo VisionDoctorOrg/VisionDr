@@ -3,10 +3,14 @@ import { AuthService } from 'src/domain/auth/services/auth.service';
 import { AuthMapper } from '../mappers/auth.mapper';
 import { User } from 'src/domain/users/entities/user.entity';
 import { Status } from '@prisma/client';
+import { SubscriptionService } from 'src/domain/subscription/services';
 
 @Injectable()
 export class LoginUseCase {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly subscriptionService: SubscriptionService,
+  ) {}
 
   async execute(data: User): Promise<User> {
     const identifier: string = data.email ? data.email : data.phoneNumber;
@@ -30,5 +34,18 @@ export class LoginUseCase {
 
     user.activated = Status.Active;
     await this.authService.updateUser(user);
+  }
+
+  async subscribe(data: User): Promise<void> {
+    const user = await this.authService.findByEmail(data.email);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Automatically create a free subscription plan for the new user
+    await this.subscriptionService.initializeSubscription(user.id, {
+      amount: 0,
+      plan: 'free-plan-id',
+    });
   }
 }
