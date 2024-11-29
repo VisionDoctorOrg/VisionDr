@@ -7,6 +7,7 @@ import { AuthService } from 'src/domain/auth/services/auth.service';
 import { User } from 'src/domain/users/entities/user.entity';
 import { MailService } from 'src/common/mail/mail.service';
 import { ConfigService } from '@nestjs/config';
+import { Status } from '@prisma/client';
 
 @Injectable()
 export class SignupUseCase {
@@ -34,6 +35,7 @@ export class SignupUseCase {
     const token = randomBytes(32).toString('hex');
     user.token = token;
     user.tokenExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    user.subscriptionActive = Status.Active;
 
     // Save user with token details
     await this.authService.updateUser(user);

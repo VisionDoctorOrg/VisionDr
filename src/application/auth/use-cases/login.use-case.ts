@@ -33,6 +33,7 @@ export class LoginUseCase {
     }
 
     user.activated = Status.Active;
+    user.subscriptionActive = Status.Active;
     await this.authService.updateUser(user);
   }
 
@@ -41,7 +42,7 @@ export class LoginUseCase {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    console.log('user.subscriptions:', user.subscriptions);
+    console.log('user:', user);
     if (!user.subscriptions) {
       console.log('Not found creating subscription:');
       // Automatically create a free subscription plan for the new user
