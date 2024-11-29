@@ -19,9 +19,10 @@ export class User extends BaseUser {
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   token?: string;
-  tokenExpires?:Date
-  activated?:Status
+  tokenExpires?: Date;
+  activated?: Status;
   confirmPassword?: string;
+  subscriptionActive?: string;
   phoneNumber?: string;
   DOB?: string;
   gender?: string;
