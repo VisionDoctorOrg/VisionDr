@@ -162,6 +162,7 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (req.user) {
       await this.loginUseCase.activate(req.user);
+      await this.loginUseCase.subscribe(req.user);
       const response = await this.loginUseCase.execute(req.user);
       const appToken = response.accessToken;
 
