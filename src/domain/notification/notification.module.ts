@@ -33,7 +33,7 @@ import { RedisTestService } from './services/edis-test.service';
     NotificationUseCase,
     NotificationMapper,
     CronService,
-    RedisTestService,
+    // RedisTestService,
     NotificationProcessor,
     Logger,
     {
